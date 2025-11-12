@@ -21,6 +21,10 @@ func NewPassphraseService(env string, envPassphraseKeys ...string) *PassphraseSe
 	return &PassphraseService{Env: env, EnvPassphraseKey: envPassphraseKey}
 }
 
+func ClearAllPassphrases() error {
+	return keyring.DeleteAll("lockify")
+}
+
 func (service *PassphraseService) GetPassphrase() string {
 	pass := os.Getenv(service.EnvPassphraseKey)
 	if pass != "" {
