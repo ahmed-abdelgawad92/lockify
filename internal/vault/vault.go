@@ -84,6 +84,10 @@ func (v *Vault) VerifyFingerPrint(passphrase string) bool {
 	return err == nil
 }
 
+func (v *Vault) DeleteEntry(key string) {
+	delete(v.Entries, key)
+}
+
 func (v *Vault) GetEntry(key string) (Entry, error) {
 	entry, exists := v.Entries[key]
 	if !exists {
