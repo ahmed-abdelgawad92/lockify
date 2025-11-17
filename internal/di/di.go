@@ -43,16 +43,16 @@ func getVaultRepository() repository.VaultRepository {
 	return fs.NewFileVaultRepository(getFileSystemStorage(), vaultConfig)
 }
 
+func getVaultService() service.VaultService {
+	return service.NewVaultService(getVaultRepository(), getPassphraseService())
+}
+
 func GetLogger() domain.Logger {
 	return log
 }
 
 func BuildAddEntry() app.AddEntryUseCase {
-	return app.NewAddEntryUseCase(
-		getVaultRepository(),
-		getEncryptionService(),
-		getPassphraseService(),
-	)
+	return app.NewAddEntryUseCase(getVaultService(), getEncryptionService())
 }
 
 func BuildClearCachedPassphrase() app.ClearCachedPassphraseUseCase {
@@ -60,9 +60,13 @@ func BuildClearCachedPassphrase() app.ClearCachedPassphraseUseCase {
 }
 
 func BuildDeleteEntry() app.DeleteEntryUseCase {
-	return app.NewDeleteEntryUseCase(getVaultRepository(), getPassphraseService())
+	return app.NewDeleteEntryUseCase(getVaultService())
 }
 
 func BuildExportEnv() app.ExportEnvUseCase {
-	return app.NewExportEnvUseCase(getVaultRepository(), getPassphraseService(), getEncryptionService(), GetLogger())
+	return app.NewExportEnvUseCase(getVaultService(), getEncryptionService(), GetLogger())
+}
+
+func BuildGetEntry() app.GetEntryUseCase {
+	return app.NewGetEntryUseCase(getVaultService(), getEncryptionService())
 }
