@@ -13,6 +13,30 @@ type Vault struct {
 	passphrase string
 }
 
+// NewVault creates a new vault instance
+func NewVault(env, fingerprint, salt string) (*Vault, error) {
+	if env == "" {
+		return nil, errors.New("environment cannot be empty")
+	}
+	if fingerprint == "" {
+		return nil, errors.New("fingerprint cannot be empty")
+	}
+	if salt == "" {
+		return nil, errors.New("salt cannot be empty")
+	}
+
+	vault := &Vault{
+		Meta: Meta{
+			Env:         env,
+			Salt:        salt,
+			FingerPrint: fingerprint,
+		},
+		Entries: make(map[string]Entry),
+	}
+
+	return vault, nil
+}
+
 // Path returns the vault file path
 func (v *Vault) Path() string {
 	return v.path

@@ -44,7 +44,7 @@ func getVaultRepository() repository.VaultRepository {
 }
 
 func getVaultService() service.VaultService {
-	return service.NewVaultService(getVaultRepository(), getPassphraseService())
+	return service.NewVaultService(getVaultRepository(), getPassphraseService(), getHashService())
 }
 
 func GetLogger() domain.Logger {
@@ -69,4 +69,8 @@ func BuildExportEnv() app.ExportEnvUseCase {
 
 func BuildGetEntry() app.GetEntryUseCase {
 	return app.NewGetEntryUseCase(getVaultService(), getEncryptionService())
+}
+
+func BuildInitializeVault() app.InitializeVaultUseCase {
+	return app.NewInitializeVaultUseCase(getVaultService())
 }
