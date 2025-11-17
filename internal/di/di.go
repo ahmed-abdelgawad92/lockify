@@ -58,3 +58,7 @@ func BuildAddEntry() app.AddEntryUseCase {
 func BuildClearCachedPassphrase() app.ClearCachedPassphraseUseCase {
 	return app.NewClearCachedPassphraseUseCase(getPassphraseService())
 }
+
+func BuildDeleteEntry() app.DeleteEntryUseCase {
+	return app.NewDeleteEntryUseCase(getVaultRepository(), getPassphraseService())
+}

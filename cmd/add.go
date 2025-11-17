@@ -19,7 +19,11 @@ Use the --secret flag to hide the value input in the terminal.`,
   lockify add --env staging --secret`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		di.GetLogger().Progress("seting a new entry to the vault...")
-		env, _ := requireEnvFlag(cmd)
+		env, err := requireEnvFlag(cmd)
+		if err != nil {
+			return err
+		}
+
 		isSecret, _ := cmd.Flags().GetBool("secret")
 		key, value := getUserInputForKeyAndValue(isSecret)
 
@@ -27,7 +31,7 @@ Use the --secret flag to hide the value input in the terminal.`,
 		useCase := di.BuildAddEntry()
 		dto := app.AddEntryDTO{Env: env, Key: key, Value: value}
 
-		err := useCase.Execute(ctx, dto)
+		err = useCase.Execute(ctx, dto)
 		if err != nil {
 			di.GetLogger().Error(err.Error())
 			return err

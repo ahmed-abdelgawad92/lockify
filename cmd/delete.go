@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 
-	"github.com/apixify/lockify/internal/service"
-	"github.com/apixify/lockify/internal/vault"
+	"github.com/apixify/lockify/internal/di"
 	"github.com/spf13/cobra"
 )
 
@@ -15,12 +13,9 @@ var delCmd = &cobra.Command{
 	Short: "delete an entry from the vault of an env",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("⏳ removing key...")
-		env, err := cmd.Flags().GetString("env")
+		env, err := requireEnvFlag(cmd)
 		if err != nil {
-			return fmt.Errorf("failed to retrieve key flag")
-		}
-		if env == "" {
-			return fmt.Errorf("env is required")
+			return err
 		}
 
 		key, err := cmd.Flags().GetString("key")
@@ -31,25 +26,14 @@ var delCmd = &cobra.Command{
 			return fmt.Errorf("key is required")
 		}
 
-		vault, err := vault.Open(env)
+		ctx := getContext()
+		useCase := di.BuildDeleteEntry()
+		err = useCase.Execute(ctx, env, key)
 		if err != nil {
-			return fmt.Errorf("failed to open vault for environment %s: %w", env, err)
+			return err
 		}
 
-		passphraseService := service.NewPassphraseService(env)
-		passphrase := passphraseService.GetPassphrase()
-		if !vault.VerifyFingerPrint(passphrase) {
-			passphraseService.ClearPassphrase()
-			return errors.New("invalid credentials")
-		}
-
-		vault.DeleteEntry(key)
-		err = vault.Save()
-		if err != nil {
-			return fmt.Errorf("failed to save vault")
-		}
-
-		fmt.Printf("✅ key %s is removed successfully.\n", key)
+		di.GetLogger().Success("key %s is removed successfully.\n", key)
 
 		return nil
 	},
@@ -58,5 +42,8 @@ var delCmd = &cobra.Command{
 func init() {
 	delCmd.Flags().StringP("env", "e", "", "Environment Name")
 	delCmd.Flags().StringP("key", "k", "", "key to delete from the vault")
+	delCmd.MarkFlagRequired("env")
+	delCmd.MarkFlagRequired("key")
+
 	rootCmd.AddCommand(delCmd)
 }
