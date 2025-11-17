@@ -62,3 +62,7 @@ func BuildClearCachedPassphrase() app.ClearCachedPassphraseUseCase {
 func BuildDeleteEntry() app.DeleteEntryUseCase {
 	return app.NewDeleteEntryUseCase(getVaultRepository(), getPassphraseService())
 }
+
+func BuildExportEnv() app.ExportEnvUseCase {
+	return app.NewExportEnvUseCase(getVaultRepository(), getPassphraseService(), getEncryptionService(), GetLogger())
+}
