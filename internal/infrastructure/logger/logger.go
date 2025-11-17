@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/apixify/lockify/internal/domain"
 )
 
 // Logger provides structured logging
@@ -13,7 +15,7 @@ type Logger struct {
 }
 
 // New creates a new logger
-func New() *Logger {
+func New() domain.Logger {
 	return &Logger{
 		stderr: os.Stderr,
 		stdout: os.Stdout,
@@ -43,9 +45,4 @@ func (l *Logger) Progress(format string, args ...interface{}) {
 // Output writes to stdout (for data output, not logs)
 func (l *Logger) Output(format string, args ...interface{}) {
 	fmt.Fprintf(l.stdout, format+"\n", args...)
-}
-
-// OutputRaw writes raw data to stdout
-func (l *Logger) OutputRaw(data []byte) {
-	l.stdout.Write(data)
 }
