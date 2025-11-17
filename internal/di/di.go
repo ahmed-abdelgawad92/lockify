@@ -78,3 +78,7 @@ func BuildInitializeVault() app.InitializeVaultUseCase {
 func BuildListEntries() app.ListEntriesUseCase {
 	return app.NewListEntriesUseCase(getVaultService())
 }
+
+func BuildRotatePassphrase() app.RotatePassphraseUseCase {
+	return app.NewRotatePassphraseUseCase(getVaultRepository(), getEncryptionService(), getHashService())
+}
