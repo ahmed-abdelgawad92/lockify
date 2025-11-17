@@ -37,6 +37,17 @@ func requireEnvFlag(cmd *cobra.Command) (string, error) {
 	return env, nil
 }
 
+func requireStringFlag(cmd *cobra.Command, flag string) (string, error) {
+	value, err := cmd.Flags().GetString(flag)
+	if err != nil {
+		return "", fmt.Errorf("failed to retrieve %s flag: %w", flag, err)
+	}
+	if value == "" {
+		return "", fmt.Errorf("%s flag is required", flag)
+	}
+	return value, nil
+}
+
 // getContext returns a context for command execution
 func getContext() context.Context {
 	return context.Background()

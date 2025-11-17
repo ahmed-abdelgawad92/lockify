@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/apixify/lockify/internal/di"
 	"github.com/spf13/cobra"
 )
@@ -18,18 +16,14 @@ This command removes a key-value pair from the vault for the specified environme
 	Example: `  lockify delete --env prod --key OLD_KEY
   lockify del --env staging -k DEPRECATED_KEY`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("⏳ removing key...")
+		di.GetLogger().Progress("removing key...")
 		env, err := requireEnvFlag(cmd)
 		if err != nil {
 			return err
 		}
-
-		key, err := cmd.Flags().GetString("key")
+		key, err := requireStringFlag(cmd, "key")
 		if err != nil {
-			return fmt.Errorf("failed to retrieve key flag")
-		}
-		if key == "" {
-			return fmt.Errorf("key is required")
+			return err
 		}
 
 		ctx := getContext()

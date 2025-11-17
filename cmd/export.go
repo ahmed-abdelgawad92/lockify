@@ -29,12 +29,9 @@ The output is written to stdout, making it suitable for shell redirection.`,
 			return err
 		}
 
-		format, err := cmd.Flags().GetString("format")
+		format, err := requireStringFlag(cmd, "format")
 		if err != nil {
-			return fmt.Errorf("failed to retrieve format flag")
-		}
-		if format == "" {
-			return fmt.Errorf("format is required")
+			return err
 		}
 
 		expotFormat := value.NewFileFormat(format)
