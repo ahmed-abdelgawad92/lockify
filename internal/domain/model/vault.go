@@ -7,9 +7,10 @@ import (
 )
 
 type Vault struct {
-	Meta    Meta             `json:"meta"`
-	Entries map[string]Entry `json:"entries"`
-	path    string
+	Meta       Meta             `json:"meta"`
+	Entries    map[string]Entry `json:"entries"`
+	path       string
+	passphrase string
 }
 
 // Path returns the vault file path
@@ -20,6 +21,16 @@ func (v *Vault) Path() string {
 // SetPath sets the vault file path
 func (v *Vault) SetPath(path string) {
 	v.path = path
+}
+
+// Passphrase returns the vault passphrase
+func (v *Vault) Passphrase() string {
+	return v.passphrase
+}
+
+// SetPassphrase sets the vault passphrase
+func (v *Vault) SetPassphrase(passphrase string) {
+	v.passphrase = passphrase
 }
 
 // GetEntry retrieves an entry by key
