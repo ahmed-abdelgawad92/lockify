@@ -13,6 +13,7 @@ import (
 // lockify export --env staging --format json > env.json
 
 var exportCmd = &cobra.Command{
+	Use:   "export",
 	Short: "Export all decrypted variables in a specific format",
 	Long: `Export all decrypted variables in a specific format.
 
@@ -35,7 +36,7 @@ The output is written to stdout, making it suitable for shell redirection.`,
 		}
 
 		expotFormat := value.NewFileFormat(format)
-		di.GetLogger().Progress("Exporting entries for environment %s...\n", env)
+		logger.Progress("Exporting entries for environment %s...\n", env)
 		ctx := getContext()
 		useCase := di.BuildExportEnv()
 		err = useCase.Execute(ctx, env, expotFormat)
@@ -50,6 +51,7 @@ The output is written to stdout, making it suitable for shell redirection.`,
 func init() {
 	exportCmd.Flags().StringP("env", "e", "", "Environment Name")
 	exportCmd.Flags().String("format", "dotenv", "The format of the exported file [dotenv|json]")
+	exportCmd.MarkFlagRequired("env")
 
 	rootCmd.AddCommand(exportCmd)
 }

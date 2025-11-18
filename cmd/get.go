@@ -16,7 +16,7 @@ The decrypted value is printed to stdout, making it suitable for shell scripting
 	Example: `  lockify get --env prod --key DATABASE_URL
   lockify get --env staging -k API_KEY`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		di.GetLogger().Progress("getting an entry from the vault")
+		logger.Progress("getting an entry from the vault")
 		env, err := requireEnvFlag(cmd)
 		if err != nil {
 			return err
@@ -34,8 +34,8 @@ The decrypted value is printed to stdout, making it suitable for shell scripting
 			return err
 		}
 
-		di.GetLogger().Success("retrieved key's value successfully")
-		di.GetLogger().Output(value)
+		logger.Success("retrieved key's value successfully")
+		logger.Output(value)
 
 		return nil
 	},
@@ -44,6 +44,7 @@ The decrypted value is printed to stdout, making it suitable for shell scripting
 func init() {
 	getCmd.Flags().StringP("env", "e", "", "Environment name")
 	getCmd.Flags().StringP("key", "k", "", "The key to use for getting the entry")
+	getCmd.MarkFlagRequired("env")
 
 	rootCmd.AddCommand(getCmd)
 }

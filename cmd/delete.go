@@ -16,7 +16,7 @@ This command removes a key-value pair from the vault for the specified environme
 	Example: `  lockify delete --env prod --key OLD_KEY
   lockify del --env staging -k DEPRECATED_KEY`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		di.GetLogger().Progress("removing key...")
+		logger.Progress("removing key...")
 		env, err := requireEnvFlag(cmd)
 		if err != nil {
 			return err
@@ -33,7 +33,7 @@ This command removes a key-value pair from the vault for the specified environme
 			return err
 		}
 
-		di.GetLogger().Success("key %s is removed successfully.\n", key)
+		logger.Success("key %s is removed successfully.\n", key)
 
 		return nil
 	},

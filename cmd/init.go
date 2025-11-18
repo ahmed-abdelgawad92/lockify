@@ -22,7 +22,7 @@ You will be prompted for a passphrase that will be used to encrypt and decrypt y
 			return err
 		}
 
-		di.GetLogger().Progress("Initializing Lockify vault")
+		logger.Progress("Initializing Lockify vault")
 		ctx := getContext()
 		useCase := di.BuildInitializeVault()
 		vault, err := useCase.Execute(ctx, env)
@@ -30,12 +30,14 @@ You will be prompted for a passphrase that will be used to encrypt and decrypt y
 			return err
 		}
 
-		di.GetLogger().Success("Lockify vault initialized at %s", vault.Path())
+		logger.Success("Lockify vault initialized at %s", vault.Path())
 		return nil
 	},
 }
 
 func init() {
 	initCmd.Flags().StringP("env", "e", "", "Environment Name")
+	initCmd.MarkFlagRequired("env")
+
 	rootCmd.AddCommand(initCmd)
 }

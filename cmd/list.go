@@ -16,7 +16,7 @@ Only keys are displayed, not decrypted values, for security reasons.`,
 	Example: `  lockify list --env prod
   lockify list --env staging`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		di.GetLogger().Progress("Listing all secrets in the vault")
+		logger.Progress("Listing all secrets in the vault")
 		env, err := requireEnvFlag(cmd)
 		if err != nil {
 			return err
@@ -30,13 +30,13 @@ Only keys are displayed, not decrypted values, for security reasons.`,
 		}
 
 		if len(keys) == 0 {
-			di.GetLogger().Info("No entries found in vault")
+			logger.Info("No entries found in vault")
 			return nil
 		}
 
-		di.GetLogger().Success("Found %d key(s):", len(keys))
+		logger.Success("Found %d key(s):", len(keys))
 		for _, v := range keys {
-			di.GetLogger().Output("  - %s\n", v)
+			logger.Output("  - %s\n", v)
 		}
 
 		return nil
@@ -45,6 +45,7 @@ Only keys are displayed, not decrypted values, for security reasons.`,
 
 func init() {
 	listCmd.Flags().StringP("env", "e", "", "Environment Name")
+	listCmd.MarkFlagRequired("env")
 
 	rootCmd.AddCommand(listCmd)
 }

@@ -15,17 +15,17 @@ This command removes all passphrases that were cached in the system keyring.
 You will be prompted for passphrases again on next use.`,
 	Example: `  lockify cache clear`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		di.GetLogger().Progress("clearing cached passphrases")
+		logger.Progress("clearing cached passphrases")
 		useCase := di.BuildClearCachedPassphrase()
 
 		ctx := getContext()
 		err := useCase.Execute(ctx)
 		if err != nil {
-			di.GetLogger().Error("failed to cleare cached passphrases")
+			logger.Error("failed to cleare cached passphrases")
 			return err
 		}
 
-		di.GetLogger().Success("cleared cached passphrases")
+		logger.Success("cleared cached passphrases")
 		return nil
 	},
 }

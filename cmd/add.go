@@ -18,7 +18,7 @@ Use the --secret flag to hide the value input in the terminal.`,
 	Example: `  lockify add --env prod
   lockify add --env staging --secret`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		di.GetLogger().Progress("seting a new entry to the vault...")
+		logger.Progress("seting a new entry to the vault...")
 		env, err := requireEnvFlag(cmd)
 		if err != nil {
 			return err
@@ -33,11 +33,11 @@ Use the --secret flag to hide the value input in the terminal.`,
 
 		err = useCase.Execute(ctx, dto)
 		if err != nil {
-			di.GetLogger().Error(err.Error())
+			logger.Error(err.Error())
 			return err
 		}
 
-		di.GetLogger().Success("key %s is added successfully.", key)
+		logger.Success("key %s is added successfully.", key)
 
 		return nil
 	},

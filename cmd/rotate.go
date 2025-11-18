@@ -30,7 +30,7 @@ with a new passphrase. You will be prompted for the current passphrase and a new
 		prompt = &survey.Password{Message: "Enter new passphrase:"}
 		survey.AskOne(prompt, &newPassphrase)
 
-		di.GetLogger().Progress("Rotating passphrase for %s...\n", env)
+		logger.Progress("Rotating passphrase for %s...\n", env)
 		ctx := getContext()
 		useCase := di.BuildRotatePassphrase()
 		err = useCase.Execute(ctx, env, passphrase, newPassphrase)
@@ -38,7 +38,7 @@ with a new passphrase. You will be prompted for the current passphrase and a new
 			return err
 		}
 
-		di.GetLogger().Success("Passphrase rotated successfully")
+		logger.Success("Passphrase rotated successfully")
 
 		return nil
 	},
@@ -46,6 +46,7 @@ with a new passphrase. You will be prompted for the current passphrase and a new
 
 func init() {
 	rotateCmd.Flags().StringP("env", "e", "", "Environment Name")
+	rotateCmd.MarkFlagRequired("env")
 
 	rootCmd.AddCommand(rotateCmd)
 }

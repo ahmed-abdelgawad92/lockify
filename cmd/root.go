@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/apixify/lockify/internal/di"
 	"github.com/spf13/cobra"
 )
+
+var logger = di.GetLogger()
 
 var rootCmd = &cobra.Command{
 	Use:   "lockify",
