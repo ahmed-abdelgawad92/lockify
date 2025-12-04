@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/apixify/lockify/internal/domain/repository"
-	"github.com/apixify/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/repository"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
 type RotatePassphraseUseCase struct {

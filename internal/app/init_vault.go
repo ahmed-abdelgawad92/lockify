@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 
-	"github.com/apixify/lockify/internal/domain/model"
-	"github.com/apixify/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
 type InitializeVaultUseCase struct {

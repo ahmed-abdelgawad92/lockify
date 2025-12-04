@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/apixify/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
 type DeleteEntryUseCase struct {

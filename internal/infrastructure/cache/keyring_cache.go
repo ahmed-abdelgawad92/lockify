@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/apixify/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 	"github.com/zalando/go-keyring"
 )
 

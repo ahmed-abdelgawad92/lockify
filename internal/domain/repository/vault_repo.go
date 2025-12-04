@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/apixify/lockify/internal/domain/model"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model"
 )
 
 // VaultRepository provides operations for managing vault storage

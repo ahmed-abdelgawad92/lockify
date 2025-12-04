@@ -33,13 +33,13 @@ It focuses on an offline-first, CLI-first experience with strong cryptography an
 ### Using Go
 
 ```sh
-go install github.com/apixify/lockify@latest
+go install github.com/ahmed-abdelgawad92/lockify@latest
 ```
 
 ### From Source
 
 ```sh
-git clone https://github.com/apixify/lockify.git
+git clone https://github.com/ahmed-abdelgawad92/lockify.git
 cd lockify
 go build -o lockify .
 ```
@@ -81,7 +81,7 @@ steps:
   - uses: actions/checkout@v4
 
   - name: Install Lockify
-    run: go install github.com/apixify/lockify@latest
+    run: go install github.com/ahmed-abdelgawad92/lockify@latest
 
   - name: Export env vars
     env:

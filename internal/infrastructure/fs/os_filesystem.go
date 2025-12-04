@@ -3,7 +3,7 @@ package fs
 import (
 	"os"
 
-	"github.com/apixify/lockify/internal/domain/storage"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/storage"
 )
 
 // OSFileSystem implements FileSystem using the OS filesystem

@@ -19,7 +19,7 @@ This document explains how to set up your environment, submit changes, and follo
 ### 1. Fork the Repository
 
 ```
-https://github.com/apixify/lockify
+https://github.com/ahmed-abdelgawad92/lockify
 ```
 
 ### 2. Clone Your Fork

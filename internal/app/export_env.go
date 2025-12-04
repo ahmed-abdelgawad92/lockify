@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/apixify/lockify/internal/domain"
-	"github.com/apixify/lockify/internal/domain/model/value"
-	"github.com/apixify/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model/value"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
 type ExportEnvUseCase struct {

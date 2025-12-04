@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/apixify/lockify/internal/domain/model"
-	"github.com/apixify/lockify/internal/domain/repository"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/repository"
 )
 
 type VaultService struct {

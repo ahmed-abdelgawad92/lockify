@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/apixify/lockify/internal/domain"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
 )
 
 // Logger provides structured logging

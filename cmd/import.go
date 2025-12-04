@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/apixify/lockify/internal/di"
-	"github.com/apixify/lockify/internal/domain/model/value"
+	"github.com/ahmed-abdelgawad92/lockify/internal/di"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model/value"
 	"github.com/spf13/cobra"
 )
 

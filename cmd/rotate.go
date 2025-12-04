@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/apixify/lockify/internal/di"
+	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/spf13/cobra"
 )
 

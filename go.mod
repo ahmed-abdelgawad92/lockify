@@ -1,4 +1,4 @@
-module github.com/apixify/lockify
+module github.com/ahmed-abdelgawad92/lockify
 
 go 1.24.4
 

@@ -49,7 +49,7 @@ linters:
           allow:
             - $gostd
             - github.com/AlecAivazis/survey/v2
-            - github.com/apixify/lockify/internal
+            - github.com/ahmed-abdelgawad92/lockify/internal
           deny:
             - pkg: github.com/jessevdk/go-flags
               desc: "Use cobra instead"

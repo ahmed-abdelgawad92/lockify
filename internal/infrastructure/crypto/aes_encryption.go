@@ -9,8 +9,8 @@ import (
 	"io"
 	"runtime"
 
-	"github.com/apixify/lockify/internal/config"
-	"github.com/apixify/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/config"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 	"golang.org/x/crypto/argon2"
 )
 

@@ -7,10 +7,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/apixify/lockify/internal/config"
-	"github.com/apixify/lockify/internal/domain/model"
-	"github.com/apixify/lockify/internal/domain/repository"
-	"github.com/apixify/lockify/internal/domain/storage"
+	"github.com/ahmed-abdelgawad92/lockify/internal/config"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/repository"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/storage"
 )
 
 // FileVaultRepository implements VaultRepository using the filesystem

@@ -1,16 +1,16 @@
 package di
 
 import (
-	"github.com/apixify/lockify/internal/app"
-	"github.com/apixify/lockify/internal/config"
-	"github.com/apixify/lockify/internal/domain"
-	"github.com/apixify/lockify/internal/domain/repository"
-	"github.com/apixify/lockify/internal/domain/service"
-	"github.com/apixify/lockify/internal/domain/storage"
-	"github.com/apixify/lockify/internal/infrastructure/cache"
-	"github.com/apixify/lockify/internal/infrastructure/crypto"
-	"github.com/apixify/lockify/internal/infrastructure/fs"
-	"github.com/apixify/lockify/internal/infrastructure/logger"
+	"github.com/ahmed-abdelgawad92/lockify/internal/app"
+	"github.com/ahmed-abdelgawad92/lockify/internal/config"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/repository"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/storage"
+	"github.com/ahmed-abdelgawad92/lockify/internal/infrastructure/cache"
+	"github.com/ahmed-abdelgawad92/lockify/internal/infrastructure/crypto"
+	"github.com/ahmed-abdelgawad92/lockify/internal/infrastructure/fs"
+	"github.com/ahmed-abdelgawad92/lockify/internal/infrastructure/logger"
 )
 
 var (

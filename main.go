@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/apixify/lockify/cmd"
+	"github.com/ahmed-abdelgawad92/lockify/cmd"
 )
 
 func main() {

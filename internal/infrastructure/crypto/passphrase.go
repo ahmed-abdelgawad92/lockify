@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/apixify/lockify/internal/domain/model"
-	"github.com/apixify/lockify/internal/domain/service"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
 // PassphraseService implements service.PassphraseService
