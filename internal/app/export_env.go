@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model/value"
@@ -25,10 +24,6 @@ func NewExportEnvUseCase(
 }
 
 func (useCase *ExportEnvUseCase) Execute(ctx context.Context, env string, exportFormat value.FileFormat) error {
-	if !exportFormat.IsValid() {
-		return fmt.Errorf("format must be either %s or %s. %s is given", value.Json, value.DotEnv, exportFormat)
-	}
-
 	vault, err := useCase.vaultService.Open(ctx, env)
 	if err != nil {
 		return err

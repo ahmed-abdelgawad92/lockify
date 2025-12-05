@@ -35,9 +35,9 @@ If no file is specified, the command reads from stdin.`,
 			return fmt.Errorf("failed to retrieve format flag: %w", err)
 		}
 
-		fileFormat := value.NewFileFormat(format)
-		if !fileFormat.IsValid() {
-			return fmt.Errorf("format must be either %q or %q, got %q", value.Json, value.DotEnv, format)
+		fileFormat, err := value.NewFileFormat(format)
+		if err != nil {
+			return err
 		}
 
 		file, filename, err := getFile(args)

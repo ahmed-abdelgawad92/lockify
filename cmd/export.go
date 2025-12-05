@@ -35,7 +35,10 @@ The output is written to stdout, making it suitable for shell redirection.`,
 			return err
 		}
 
-		expotFormat := value.NewFileFormat(format)
+		expotFormat, err := value.NewFileFormat(format)
+		if err != nil {
+			return err
+		}
 		logger.Progress("Exporting entries for environment %s...\n", env)
 		ctx := getContext()
 		useCase := di.BuildExportEnv()

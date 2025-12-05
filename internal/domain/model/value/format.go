@@ -1,5 +1,7 @@
 package value
 
+import "fmt"
+
 type FileFormat string
 
 const (
@@ -7,8 +9,12 @@ const (
 	DotEnv FileFormat = "dotenv"
 )
 
-func NewFileFormat(value string) FileFormat {
-	return FileFormat(value)
+func NewFileFormat(value string) (FileFormat, error) {
+	format := FileFormat(value)
+	if !format.IsValid() {
+		return "", fmt.Errorf("invalid file format %q: must be either %q or %q", value, Json, DotEnv)
+	}
+	return format, nil
 }
 
 func (fileFormat FileFormat) String() string {
