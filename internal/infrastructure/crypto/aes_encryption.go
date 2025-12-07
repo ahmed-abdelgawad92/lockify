@@ -88,14 +88,14 @@ func (e *AESEncryptionService) Decrypt(ciphertext, encodedSalt, passphrase strin
 		return nil, fmt.Errorf("ciphertext cannot be empty")
 	}
 
-	aead, err := e.getAEAD(encodedSalt, passphrase)
-	if err != nil {
-		return nil, err
-	}
-
 	raw, err := base64.StdEncoding.DecodeString(ciphertext)
 	if err != nil {
 		return nil, fmt.Errorf("invalid ciphertext encoding: %w", err)
+	}
+
+	aead, err := e.getAEAD(encodedSalt, passphrase)
+	if err != nil {
+		return nil, err
 	}
 
 	if err := e.validateCiphertextLength(raw, aead.Overhead()); err != nil {
