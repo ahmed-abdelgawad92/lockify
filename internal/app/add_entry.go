@@ -8,7 +8,7 @@ import (
 )
 
 type AddEntryUseCase struct {
-	vaultService      service.VaultService
+	vaultService      service.VaultServiceInterface
 	encryptionService service.EncryptionService
 }
 
@@ -19,7 +19,7 @@ type AddEntryDTO struct {
 }
 
 func NewAddEntryUseCase(
-	vaultService service.VaultService,
+	vaultService service.VaultServiceInterface,
 	encryptionService service.EncryptionService,
 ) AddEntryUseCase {
 	return AddEntryUseCase{vaultService, encryptionService}

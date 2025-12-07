@@ -7,11 +7,11 @@ import (
 )
 
 type GetEntryUseCase struct {
-	vaultService      service.VaultService
+	vaultService      service.VaultServiceInterface
 	encryptionService service.EncryptionService
 }
 
-func NewGetEntryUseCase(vaultService service.VaultService, encryptionService service.EncryptionService) GetEntryUseCase {
+func NewGetEntryUseCase(vaultService service.VaultServiceInterface, encryptionService service.EncryptionService) GetEntryUseCase {
 	return GetEntryUseCase{vaultService, encryptionService}
 }
 

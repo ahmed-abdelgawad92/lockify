@@ -11,14 +11,14 @@ import (
 )
 
 type ImportEnvUseCase struct {
-	vaultService      service.VaultService
+	vaultService      service.VaultServiceInterface
 	importService     service.ImportService
 	encryptionService service.EncryptionService
 	logger            domain.Logger
 }
 
 func NewImportEnvUseCase(
-	vaultService service.VaultService,
+	vaultService service.VaultServiceInterface,
 	importService service.ImportService,
 	encryptionService service.EncryptionService,
 	logger domain.Logger,

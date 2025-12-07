@@ -8,10 +8,10 @@ import (
 )
 
 type DeleteEntryUseCase struct {
-	vaultService service.VaultService
+	vaultService service.VaultServiceInterface
 }
 
-func NewDeleteEntryUseCase(vaultService service.VaultService) DeleteEntryUseCase {
+func NewDeleteEntryUseCase(vaultService service.VaultServiceInterface) DeleteEntryUseCase {
 	return DeleteEntryUseCase{vaultService}
 }
 

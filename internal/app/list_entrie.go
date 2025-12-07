@@ -7,10 +7,10 @@ import (
 )
 
 type ListEntriesUseCase struct {
-	vaultService service.VaultService
+	vaultService service.VaultServiceInterface
 }
 
-func NewListEntriesUseCase(vaultService service.VaultService) ListEntriesUseCase {
+func NewListEntriesUseCase(vaultService service.VaultServiceInterface) ListEntriesUseCase {
 	return ListEntriesUseCase{vaultService}
 }
 

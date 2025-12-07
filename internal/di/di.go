@@ -43,7 +43,7 @@ func getVaultRepository() repository.VaultRepository {
 	return fs.NewFileVaultRepository(getFileSystemStorage(), vaultConfig)
 }
 
-func getVaultService() service.VaultService {
+func getVaultService() service.VaultServiceInterface {
 	return service.NewVaultService(getVaultRepository(), getPassphraseService(), getHashService())
 }
 

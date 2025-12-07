@@ -8,10 +8,10 @@ import (
 )
 
 type InitializeVaultUseCase struct {
-	vaultService service.VaultService
+	vaultService service.VaultServiceInterface
 }
 
-func NewInitializeVaultUseCase(vaultService service.VaultService) InitializeVaultUseCase {
+func NewInitializeVaultUseCase(vaultService service.VaultServiceInterface) InitializeVaultUseCase {
 	return InitializeVaultUseCase{vaultService}
 }
 

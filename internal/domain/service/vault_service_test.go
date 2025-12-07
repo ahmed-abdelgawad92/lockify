@@ -126,7 +126,7 @@ func createVaultServiceWithMocks(
 	repo *mockVaultRepository,
 	passphrase *mockPassphraseService,
 	hash *mockHashService,
-) VaultService {
+) VaultServiceInterface {
 	return NewVaultService(repo, passphrase, hash)
 }
 

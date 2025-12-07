@@ -8,6 +8,12 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/repository"
 )
 
+type VaultServiceInterface interface {
+	Open(ctx context.Context, env string) (*model.Vault, error)
+	Save(ctx context.Context, vault *model.Vault) error
+	Create(ctx context.Context, env string) (*model.Vault, error)
+}
+
 type VaultService struct {
 	vaultRepo         repository.VaultRepository
 	passphraseService PassphraseService
@@ -18,8 +24,8 @@ func NewVaultService(
 	vaultRepo repository.VaultRepository,
 	passphraseService PassphraseService,
 	hashService HashService,
-) VaultService {
-	return VaultService{vaultRepo, passphraseService, hashService}
+) *VaultService {
+	return &VaultService{vaultRepo, passphraseService, hashService}
 }
 
 func (vs *VaultService) Create(ctx context.Context, env string) (*model.Vault, error) {

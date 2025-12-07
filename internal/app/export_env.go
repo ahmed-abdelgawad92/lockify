@@ -10,13 +10,13 @@ import (
 )
 
 type ExportEnvUseCase struct {
-	vaultService      service.VaultService
+	vaultService      service.VaultServiceInterface
 	encryptionService service.EncryptionService
 	logger            domain.Logger
 }
 
 func NewExportEnvUseCase(
-	vaultService service.VaultService,
+	vaultService service.VaultServiceInterface,
 	encryptionService service.EncryptionService,
 	logger domain.Logger,
 ) ExportEnvUseCase {
