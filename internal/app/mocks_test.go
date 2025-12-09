@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"io"
 
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model"
 )
@@ -131,4 +132,24 @@ func (l *mockLogger) Output(format string, args ...interface{}) {
 	}
 
 	l.OutputFunc(format, args...)
+}
+
+// mockImportService mocks the ImportService for testing.
+type mockImportService struct {
+	FromJsonFunc   func(r io.Reader) (map[string]string, error)
+	FromDotEnvFunc func(r io.Reader) (map[string]string, error)
+}
+
+func (m *mockImportService) FromJson(r io.Reader) (map[string]string, error) {
+	if m.FromJsonFunc != nil {
+		return m.FromJsonFunc(r)
+	}
+	return make(map[string]string), nil
+}
+
+func (m *mockImportService) FromDotEnv(r io.Reader) (map[string]string, error) {
+	if m.FromDotEnvFunc != nil {
+		return m.FromDotEnvFunc(r)
+	}
+	return make(map[string]string), nil
 }
