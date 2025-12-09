@@ -153,3 +153,104 @@ func (m *mockImportService) FromDotEnv(r io.Reader) (map[string]string, error) {
 	}
 	return make(map[string]string), nil
 }
+
+// mockVaultRepository mocks the VaultRepository for testing.
+type mockVaultRepository struct {
+	CreateFunc func(ctx context.Context, vault *model.Vault) error
+	LoadFunc   func(ctx context.Context, env string) (*model.Vault, error)
+	SaveFunc   func(ctx context.Context, vault *model.Vault) error
+	ExistsFunc func(ctx context.Context, env string) (bool, error)
+}
+
+func (m *mockVaultRepository) Create(ctx context.Context, vault *model.Vault) error {
+	if m.CreateFunc != nil {
+		return m.CreateFunc(ctx, vault)
+	}
+	return nil
+}
+
+func (m *mockVaultRepository) Load(ctx context.Context, env string) (*model.Vault, error) {
+	if m.LoadFunc != nil {
+		return m.LoadFunc(ctx, env)
+	}
+	vault, _ := model.NewVault(env, "test-fingerprint", "test-salt")
+	return vault, nil
+}
+
+func (m *mockVaultRepository) Save(ctx context.Context, vault *model.Vault) error {
+	if m.SaveFunc != nil {
+		return m.SaveFunc(ctx, vault)
+	}
+	return nil
+}
+
+func (m *mockVaultRepository) Exists(ctx context.Context, env string) (bool, error) {
+	if m.ExistsFunc != nil {
+		return m.ExistsFunc(ctx, env)
+	}
+	return false, nil
+}
+
+// mockHashService mocks the HashService for testing.
+type mockHashService struct {
+	HashFunc         func(passphrase string) (string, error)
+	VerifyFunc       func(hashedPassphrase, passphrase string) error
+	GenerateSaltFunc func(size int) (string, error)
+}
+
+func (m *mockHashService) Hash(passphrase string) (string, error) {
+	if m.HashFunc != nil {
+		return m.HashFunc(passphrase)
+	}
+	return "test-fingerprint", nil
+}
+
+func (m *mockHashService) Verify(hashedPassphrase, passphrase string) error {
+	if m.VerifyFunc != nil {
+		return m.VerifyFunc(hashedPassphrase, passphrase)
+	}
+	return nil
+}
+
+func (m *mockHashService) GenerateSalt(size int) (string, error) {
+	if m.GenerateSaltFunc != nil {
+		return m.GenerateSaltFunc(size)
+	}
+	return "test-salt", nil
+}
+
+// mockPassphraseService mocks the PassphraseService for testing.
+type mockPassphraseService struct {
+	GetFunc      func(ctx context.Context, env string) (string, error)
+	ClearFunc    func(ctx context.Context, env string) error
+	ClearAllFunc func(ctx context.Context) error
+	ValidateFunc func(ctx context.Context, vault *model.Vault, passphrase string) error
+}
+
+func (m *mockPassphraseService) Get(ctx context.Context, env string) (string, error) {
+	if m.GetFunc != nil {
+		return m.GetFunc(ctx, env)
+	}
+	return "test-passphrase", nil
+}
+
+func (m *mockPassphraseService) Clear(ctx context.Context, env string) error {
+	if m.ClearFunc != nil {
+		return m.ClearFunc(ctx, env)
+	}
+	return nil
+}
+
+func (m *mockPassphraseService) ClearAll(ctx context.Context) error {
+	if m.ClearAllFunc != nil {
+		return m.ClearAllFunc(ctx)
+	}
+	return nil
+}
+
+func (m *mockPassphraseService) Validate(ctx context.Context, vault *model.Vault, passphrase string) error {
+	if m.ValidateFunc != nil {
+		return m.ValidateFunc(ctx, vault, passphrase)
+	}
+	return nil
+}
