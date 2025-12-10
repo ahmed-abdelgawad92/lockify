@@ -17,7 +17,7 @@ func NewAddCommand(addUc app.AddEntryUc, logger domain.Logger) *cobra.Command {
 	cmd := &AddCommand{useCase: addUc, logger: logger}
 
 	// lockify add --env [env]
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:   "add",
 		Short: "Add or update an entry in the vault",
 		Long: `Add or update an entry in the vault.
@@ -28,6 +28,12 @@ func NewAddCommand(addUc app.AddEntryUc, logger domain.Logger) *cobra.Command {
 	lockify add --env staging --secret`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
+	cobraCmd.Flags().BoolP("secret", "s", false, "States that value to set is a secret and should be hidden in the terminal")
+	cobraCmd.MarkFlagRequired("env")
+
+	return cobraCmd
 }
 
 func (c *AddCommand) runE(cmd *cobra.Command, args []string) error {
@@ -56,10 +62,6 @@ func (c *AddCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	addCmd := NewAddCommand(di.BuildAddEntry(), di.GetLogger())
-	addCmd.Flags().StringP("env", "e", "", "Environment Name")
-	addCmd.Flags().BoolP("secret", "s", false, "States that value to set is a secret and should be hidden in the terminal")
-	addCmd.MarkFlagRequired("env")
-
 	rootCmd.AddCommand(addCmd)
 }
 

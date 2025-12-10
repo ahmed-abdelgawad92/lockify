@@ -20,7 +20,7 @@ func NewExportCommand(useCase app.ExportEnvUc, logger domain.Logger) *cobra.Comm
 	// lockify export --env [env] --format [dotenv|json]
 	// lockify export --env prod --format dotenv > .env
 	// lockify export --env staging --format json > env.json
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:   "export",
 		Short: "Export all decrypted variables in a specific format",
 		Long: `Export all decrypted variables in a specific format.
@@ -34,6 +34,12 @@ The output is written to stdout, making it suitable for shell redirection.`,
   lockify export --env local --format dotenv`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
+	cobraCmd.Flags().String("format", "dotenv", "The format of the exported file [dotenv|json]")
+	cobraCmd.MarkFlagRequired("env")
+
+	return cobraCmd
 }
 
 func (c *ExportCommand) runE(cmd *cobra.Command, args []string) error {
@@ -63,9 +69,5 @@ func (c *ExportCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	exportCmd := NewExportCommand(di.BuildExportEnv(), di.GetLogger())
-	exportCmd.Flags().StringP("env", "e", "", "Environment Name")
-	exportCmd.Flags().String("format", "dotenv", "The format of the exported file [dotenv|json]")
-	exportCmd.MarkFlagRequired("env")
-
 	rootCmd.AddCommand(exportCmd)
 }

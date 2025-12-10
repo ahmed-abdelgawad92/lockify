@@ -16,7 +16,7 @@ func NewListCommand(useCase app.ListEntriesUc, logger domain.Logger) *cobra.Comm
 
 	cmd := &ListCommand{useCase, logger}
 	// lockify list [env]
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all keys in the vault",
 		Long: `List all keys in the vault.
@@ -27,6 +27,11 @@ Only keys are displayed, not decrypted values, for security reasons.`,
   lockify list --env staging`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
+	cobraCmd.MarkFlagRequired("env")
+
+	return cobraCmd
 }
 
 func (c *ListCommand) runE(cmd *cobra.Command, args []string) error {
@@ -57,8 +62,5 @@ func (c *ListCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	listCmd := NewListCommand(di.BuildListEntries(), di.GetLogger())
-	listCmd.Flags().StringP("env", "e", "", "Environment Name")
-	listCmd.MarkFlagRequired("env")
-
 	rootCmd.AddCommand(listCmd)
 }

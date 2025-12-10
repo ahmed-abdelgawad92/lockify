@@ -21,7 +21,7 @@ func NewImportCommand(useCase app.ImportEnvUc, logger domain.Logger) *cobra.Comm
 
 	// lockify import .env --env prod --format dotenv
 	// lockify import config.json --env staging --format json
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:   "import [file]",
 		Short: "Import variables from a file into the vault",
 		Long: `Import variables from a file into the vault.
@@ -35,6 +35,16 @@ If no file is specified, the command reads from stdin.`,
   cat .env | lockify import --env local --format dotenv`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment name")
+	cobraCmd.Flags().String("format", "dotenv", "Input format (dotenv|json)")
+	cobraCmd.Flags().Bool("overwrite", false, "Overwrite existing keys")
+
+	cobraCmd.MarkFlagFilename("file")
+	cobraCmd.MarkFlagRequired("env")
+	cobraCmd.MarkFlagRequired("format")
+
+	return cobraCmd
 }
 
 func (c *ImportCommand) runE(cmd *cobra.Command, args []string) error {
@@ -73,14 +83,6 @@ func (c *ImportCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	importCmd := NewImportCommand(di.BuildImportEnv(), di.GetLogger())
-	importCmd.Flags().StringP("env", "e", "", "Environment name")
-	importCmd.Flags().String("format", "dotenv", "Input format (dotenv|json)")
-	importCmd.Flags().Bool("overwrite", false, "Overwrite existing keys")
-
-	importCmd.MarkFlagFilename("file")
-	importCmd.MarkFlagRequired("env")
-	importCmd.MarkFlagRequired("format")
-
 	rootCmd.AddCommand(importCmd)
 }
 

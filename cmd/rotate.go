@@ -17,7 +17,7 @@ func NewRotateCommand(useCase app.RotatePassphraseUc, logger domain.Logger) *cob
 	cmd := &RotateCommand{useCase, logger}
 
 	// lockify rotate-key --env [env]
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:   "rotate-key",
 		Short: "Rotate the passphrase for a vault",
 		Long: `Rotate the passphrase for a vault.
@@ -28,6 +28,11 @@ with a new passphrase. You will be prompted for the current passphrase and a new
   lockify rotate-key --env staging`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
+	cobraCmd.MarkFlagRequired("env")
+
+	return cobraCmd
 }
 
 func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
@@ -61,8 +66,5 @@ func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	rotateCmd := NewRotateCommand(di.BuildRotatePassphrase(), di.GetLogger())
-	rotateCmd.Flags().StringP("env", "e", "", "Environment Name")
-	rotateCmd.MarkFlagRequired("env")
-
 	rootCmd.AddCommand(rotateCmd)
 }

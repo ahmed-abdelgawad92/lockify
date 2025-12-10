@@ -15,7 +15,7 @@ type GetCommand struct {
 func NewGetCommand(useCase app.GetEntryUc, logger domain.Logger) *cobra.Command {
 	cmd := &GetCommand{useCase, logger}
 	// lockify get --env [env] --key [key]
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a decrypted value from the vault",
 		Long: `Get a decrypted value from the vault.
@@ -26,6 +26,12 @@ The decrypted value is printed to stdout, making it suitable for shell scripting
   lockify get --env staging -k API_KEY`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment name")
+	cobraCmd.Flags().StringP("key", "k", "", "The key to use for getting the entry")
+	cobraCmd.MarkFlagRequired("env")
+
+	return cobraCmd
 }
 
 func (c *GetCommand) runE(cmd *cobra.Command, args []string) error {
@@ -54,9 +60,5 @@ func (c *GetCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	getCmd := NewGetCommand(di.BuildGetEntry(), di.GetLogger())
-	getCmd.Flags().StringP("env", "e", "", "Environment name")
-	getCmd.Flags().StringP("key", "k", "", "The key to use for getting the entry")
-	getCmd.MarkFlagRequired("env")
-
 	rootCmd.AddCommand(getCmd)
 }

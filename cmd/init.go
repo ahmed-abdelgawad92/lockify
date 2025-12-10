@@ -16,7 +16,7 @@ func NewInitCommand(initUc app.InitUc, logger domain.Logger) *cobra.Command {
 	cmd := &InitCommand{useCase: initUc, logger: logger}
 
 	// lockify init --env [env]
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialize a new Lockify vault in the current directory",
 		Long: `Initialize a new Lockify vault for an environment.
@@ -28,6 +28,11 @@ func NewInitCommand(initUc app.InitUc, logger domain.Logger) *cobra.Command {
 	lockify init -e local`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
+	cobraCmd.MarkFlagRequired("env")
+
+	return cobraCmd
 }
 
 func (c *InitCommand) runE(cmd *cobra.Command, args []string) error {
@@ -49,8 +54,5 @@ func (c *InitCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	initCmd := NewInitCommand(di.BuildInitializeVault(), di.GetLogger())
-	initCmd.Flags().StringP("env", "e", "", "Environment Name")
-	initCmd.MarkFlagRequired("env")
-
 	rootCmd.AddCommand(initCmd)
 }

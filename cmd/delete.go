@@ -15,7 +15,7 @@ type DeleteCommand struct {
 func NewDeleteCommand(useCase app.DeleteEntryUc, logger domain.Logger) *cobra.Command {
 	cmd := &DeleteCommand{useCase, logger}
 	// lockify del --env [env] --key [key]
-	return &cobra.Command{
+	cobraCmd := &cobra.Command{
 		Use:     "delete",
 		Aliases: []string{"del", "rm"},
 		Short:   "Delete an entry from the vault",
@@ -26,6 +26,13 @@ This command removes a key-value pair from the vault for the specified environme
   lockify del --env staging -k DEPRECATED_KEY`,
 		RunE: cmd.runE,
 	}
+
+	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
+	cobraCmd.Flags().StringP("key", "k", "", "key to delete from the vault")
+	cobraCmd.MarkFlagRequired("env")
+	cobraCmd.MarkFlagRequired("key")
+
+	return cobraCmd
 }
 
 func (c *DeleteCommand) runE(cmd *cobra.Command, args []string) error {
@@ -52,10 +59,5 @@ func (c *DeleteCommand) runE(cmd *cobra.Command, args []string) error {
 
 func init() {
 	delCmd := NewDeleteCommand(di.BuildDeleteEntry(), di.GetLogger())
-	delCmd.Flags().StringP("env", "e", "", "Environment Name")
-	delCmd.Flags().StringP("key", "k", "", "key to delete from the vault")
-	delCmd.MarkFlagRequired("env")
-	delCmd.MarkFlagRequired("key")
-
 	rootCmd.AddCommand(delCmd)
 }
