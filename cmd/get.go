@@ -49,6 +49,7 @@ func (c *GetCommand) runE(cmd *cobra.Command, args []string) error {
 	ctx := getContext()
 	value, err := c.useCase.Execute(ctx, env, key)
 	if err != nil {
+		c.logger.Error(err.Error())
 		return err
 	}
 
