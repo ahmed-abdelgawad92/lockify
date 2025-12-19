@@ -10,7 +10,8 @@ import (
 
 // MockPromptService mocks the PromptService for testing.
 type MockPromptService struct {
-	GetUserInputFunc func(isSecret bool) (key, value string)
+	GetUserInputFunc       func(isSecret bool) (key, value string)
+	GetPassphraseInputFunc func(message string) string
 }
 
 func (m *MockPromptService) GetUserInputForKeyAndValue(isSecret bool) (key, value string) {
@@ -19,6 +20,14 @@ func (m *MockPromptService) GetUserInputForKeyAndValue(isSecret bool) (key, valu
 	}
 
 	return "test_key", "test_value"
+}
+
+func (m *MockPromptService) GetPassphraseInput(message string) string {
+	if m.GetPassphraseInputFunc != nil {
+		return m.GetPassphraseInputFunc(message)
+	}
+
+	return "test_passphrase"
 }
 
 // MockVaultService mocks the VaultService for testing.

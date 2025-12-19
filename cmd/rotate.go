@@ -1,20 +1,21 @@
 package cmd
 
 import (
-	"github.com/AlecAivazis/survey/v2"
 	"github.com/ahmed-abdelgawad92/lockify/internal/app"
 	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
+	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 	"github.com/spf13/cobra"
 )
 
 type RotateCommand struct {
 	useCase app.RotatePassphraseUc
+	prompt  service.PromptService
 	logger  domain.Logger
 }
 
-func NewRotateCommand(useCase app.RotatePassphraseUc, logger domain.Logger) *cobra.Command {
-	cmd := &RotateCommand{useCase, logger}
+func NewRotateCommand(useCase app.RotatePassphraseUc, prompt service.PromptService, logger domain.Logger) *cobra.Command {
+	cmd := &RotateCommand{useCase, prompt, logger}
 
 	// lockify rotate-key --env [env]
 	cobraCmd := &cobra.Command{
@@ -41,13 +42,8 @@ func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var passphrase string
-	prompt := &survey.Password{Message: "Enter current passphrase:"}
-	survey.AskOne(prompt, &passphrase)
-
-	var newPassphrase string
-	prompt = &survey.Password{Message: "Enter new passphrase:"}
-	survey.AskOne(prompt, &newPassphrase)
+	passphrase := c.prompt.GetPassphraseInput("Enter current passphrase:")
+	newPassphrase := c.prompt.GetPassphraseInput("Enter new passphrase:")
 
 	c.logger.Progress("Rotating passphrase for %s...\n", env)
 	ctx := getContext()
@@ -65,6 +61,6 @@ func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	rotateCmd := NewRotateCommand(di.BuildRotatePassphrase(), di.GetLogger())
+	rotateCmd := NewRotateCommand(di.BuildRotatePassphrase(), di.BuildPromptService(), di.GetLogger())
 	rootCmd.AddCommand(rotateCmd)
 }

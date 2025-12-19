@@ -25,3 +25,10 @@ func (p *PromptService) GetUserInputForKeyAndValue(isSecret bool) (key, value st
 
 	return key, value
 }
+
+func (p *PromptService) GetPassphraseInput(message string) string {
+	var passphrase string
+	prompt := &survey.Password{Message: message}
+	survey.AskOne(prompt, &passphrase)
+	return passphrase
+}
