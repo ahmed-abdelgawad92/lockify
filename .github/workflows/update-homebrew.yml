@@ -1,0 +1,100 @@
+name: Update Homebrew Formula
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-formula:
+    name: Update Homebrew Formula
+    runs-on: ubuntu-latest
+    # Use macOS for Homebrew, or skip audit on Linux
+    
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+        with:
+          repository: ahmed-abdelgawad92/lockify
+          path: main-repo
+
+      - name: Checkout tap repository
+        uses: actions/checkout@v4
+        with:
+          repository: ahmed-abdelgawad92/homebrew-lockify
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: tap-repo
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          VERSION=${TAG_NAME#v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION from tag: $TAG_NAME"
+
+      - name: Validate release tag
+        run: |
+          if ! [[ "${{ steps.version.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Non-stable version detected, skipping Homebrew update"
+            exit 0
+          fi
+
+      - name: Download source tarball
+        id: tarball
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          TARBALL_URL="https://github.com/ahmed-abdelgawad92/lockify/archive/refs/tags/${TAG_NAME}.tar.gz"
+          echo "url=$TARBALL_URL" >> $GITHUB_OUTPUT
+          
+          # Download and compute SHA256
+          curl -L -o /tmp/source.tar.gz "$TARBALL_URL"
+          SHA256=$(shasum -a 256 /tmp/source.tar.gz | awk '{print $1}')
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "Computed SHA256: $SHA256"
+
+      - name: Generate formula from template
+        run: |
+          TEMPLATE_FILE="main-repo/.brew-template/lockify.tpl"
+          FORMULA_FILE="tap-repo/Formula/lockify.rb"
+          
+          # Fail fast if template is missing
+          if [ ! -f "$TEMPLATE_FILE" ]; then
+            echo "Error: Template file not found at $TEMPLATE_FILE"
+            exit 1
+          fi
+          
+          # Ensure Formula directory exists
+          mkdir -p tap-repo/Formula
+          
+          # Read template and replace placeholders
+          sed -e "s|{{TARBALL_URL}}|${{ steps.tarball.outputs.url }}|g" \
+              -e "s|{{SHA256}}|${{ steps.tarball.outputs.sha256 }}|g" \
+              "$TEMPLATE_FILE" > "$FORMULA_FILE"
+          
+          # Display generated formula for verification
+          echo "Generated formula:"
+          cat "$FORMULA_FILE"
+
+      - name: Validate formula syntax
+        run: ruby -c tap-repo/Formula/lockify.rb
+
+      - name: Commit and push changes
+        working-directory: tap-repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add Formula/lockify.rb
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          git commit -m "lockify ${{ steps.version.outputs.version }}"
+          git push
+

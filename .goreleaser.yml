@@ -48,21 +48,6 @@ changelog:
       - Merge pull request
       - Merge branch
 
-# Homebrew Cask (for pre-built binaries)
-# Tap repository: https://github.com/ahmed-abdelgawad92/homebrew-lockify
-# On release, goreleaser will create/update the Caskfile automatically
-# Users can install with:
-#   brew tap ahmed-abdelgawad92/lockify
-#   brew install --cask lockify
-# Or directly: brew install --cask ahmed-abdelgawad92/lockify
-homebrew_casks:
-  - name: lockify
-    repository:
-      owner: ahmed-abdelgawad92
-      name: homebrew-lockify
-    homepage: "https://github.com/ahmed-abdelgawad92/lockify"
-    description: "Secure environment variable management"
-
 # Snapshot builds (for testing)
 snapshot:
   version_template: "{{ .Tag }}-next"
@@ -84,7 +69,10 @@ release:
     
     Extract and add to your PATH.
     
-    **Option 2: Package Managers (Optional)**
+    **Option 2: Homebrew (macOS/Linux)**
     
-    - **macOS**: `brew install --cask ahmed-abdelgawad92/lockify/lockify`
+    ```bash
+    brew tap ahmed-abdelgawad92/lockify
+    brew install lockify
+    ```
 
