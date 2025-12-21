@@ -157,7 +157,7 @@ func TestDeleteEntry(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}
-	if err.Error() != fmt.Sprintf("key \"%s\" not found", testKey) {
+	if err.Error() != fmt.Sprintf("key %q not found", testKey) {
 		t.Errorf("expected error %q, got %q", fmt.Sprintf("key %q not found", testKey), err.Error())
 	}
 }

@@ -13,7 +13,7 @@ import (
 )
 
 type mockImportUseCase struct {
-	executeFunc       func(ctx context.Context, env string, format value.FileFormat, r io.Reader, overwrite bool) (int, int, error)
+	executeFunc       func(ctx context.Context, env string, format value.FileFormat, r io.Reader, overwrite bool) (imported, skipped int, err error)
 	receivedEnv       string
 	receivedFormat    value.FileFormat
 	receivedOverwrite bool
@@ -25,7 +25,7 @@ func (m *mockImportUseCase) Execute(
 	format value.FileFormat,
 	r io.Reader,
 	overwrite bool,
-) (int, int, error) {
+) (imported, skipped int, err error) {
 	m.receivedEnv = env
 	m.receivedFormat = format
 	m.receivedOverwrite = overwrite
@@ -92,7 +92,7 @@ func TestImportCommand_Success_WithOverwrite(t *testing.T) {
 
 func TestImportCommand_UseCaseError(t *testing.T) {
 	mockUseCase := &mockImportUseCase{
-		executeFunc: func(ctx context.Context, env string, format value.FileFormat, r io.Reader, overwrite bool) (int, int, error) {
+		executeFunc: func(ctx context.Context, env string, format value.FileFormat, r io.Reader, overwrite bool) (imported, skipped int, err error) {
 			return 0, 0, fmt.Errorf("%s", errMsgExecuteFailed)
 		},
 	}

@@ -11,26 +11,26 @@ type OSKeyring struct {
 }
 
 // NewOSKeyring creates a new OS keyring implementation
-func NewOSKeyring(service string) service.Cache {
-	return &OSKeyring{service: service}
+func NewOSKeyring(s string) service.Cache {
+	return &OSKeyring{service: s}
 }
 
 // Set stores a value in the keyring
-func (osKeyRing *OSKeyring) Set(key, value string) error {
-	return keyring.Set(osKeyRing.service, key, value)
+func (k *OSKeyring) Set(key, value string) error {
+	return keyring.Set(k.service, key, value)
 }
 
 // Get retrieves a value from the keyring
-func (osKeyRing *OSKeyring) Get(key string) (string, error) {
-	return keyring.Get(osKeyRing.service, key)
+func (k *OSKeyring) Get(key string) (string, error) {
+	return keyring.Get(k.service, key)
 }
 
 // Delete removes a value from the keyring
-func (osKeyRing *OSKeyring) Delete(key string) error {
-	return keyring.Delete(osKeyRing.service, key)
+func (k *OSKeyring) Delete(key string) error {
+	return keyring.Delete(k.service, key)
 }
 
 // DeleteAll removes all values for a service from the keyring
-func (osKeyRing *OSKeyring) DeleteAll() error {
-	return keyring.DeleteAll(osKeyRing.service)
+func (k *OSKeyring) DeleteAll() error {
+	return keyring.DeleteAll(k.service)
 }

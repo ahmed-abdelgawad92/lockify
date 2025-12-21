@@ -77,7 +77,10 @@ func (e *AESEncryptionService) Encrypt(
 	}
 
 	ciphertext := aead.Seal(nil, nonce, plaintext, nil)
-	result := append(nonce, ciphertext...)
+	result := make([]byte, 0, len(nonce)+len(ciphertext))
+	result = append(result, nonce...)
+	result = append(result, ciphertext...)
+
 	encoded := base64.StdEncoding.EncodeToString(result)
 
 	clearBytes(nonce, ciphertext)
@@ -134,7 +137,7 @@ func (e *AESEncryptionService) validateCiphertextLength(ciphertext []byte, overh
 }
 
 // deriveKey derives a key from a passphrase using Argon2id
-func deriveKey(passphrase []byte, salt []byte, cfg config.EncryptionConfig) []byte {
+func deriveKey(passphrase, salt []byte, cfg config.EncryptionConfig) []byte {
 	return argon2.IDKey(
 		passphrase,
 		salt,

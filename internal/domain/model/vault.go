@@ -71,7 +71,7 @@ func (v *Vault) GetEntry(key string) (Entry, error) {
 }
 
 // SetEntry adds or updates an entry
-func (v *Vault) SetEntry(key string, encryptedValue string) error {
+func (v *Vault) SetEntry(key, encryptedValue string) error {
 	if key == "" {
 		return errors.New("key cannot be empty")
 	}

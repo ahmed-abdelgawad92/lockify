@@ -40,26 +40,24 @@ func NewImportEnvUseCase(
 }
 
 // Execute imports entries from a reader into the vault.
-func (useCase *ImportEnvUseCase) Execute(
+func (uc *ImportEnvUseCase) Execute(
 	ctx context.Context,
 	env string,
 	format value.FileFormat,
 	r io.Reader,
 	overwrite bool,
-) (int, int, error) {
-	imported := 0
-	skipped := 0
-	vault, err := useCase.vaultService.Open(ctx, env)
+) (imported, skipped int, err error) {
+	vault, err := uc.vaultService.Open(ctx, env)
 	if err != nil {
-		return imported, skipped, fmt.Errorf("couln't open vault for env %s: %w", env, err)
+		return 0, 0, fmt.Errorf("couln't open vault for env %s: %w", env, err)
 	}
 
 	var entries map[string]string
 	switch format {
 	case value.JSON:
-		entries, err = useCase.importService.FromJSON(r)
+		entries, err = uc.importService.FromJSON(r)
 	case value.DotEnv:
-		entries, err = useCase.importService.FromDotEnv(r)
+		entries, err = uc.importService.FromDotEnv(r)
 	default:
 		return imported, skipped, fmt.Errorf("unsupported format: %q", format)
 	}
@@ -75,12 +73,12 @@ func (useCase *ImportEnvUseCase) Execute(
 	for key, value := range entries {
 		_, err := vault.GetEntry(key)
 		if err == nil && !overwrite {
-			useCase.logger.Warning("Skipping existing key %q (use --overwrite to replace)", key)
+			uc.logger.Warning("Skipping existing key %q (use --overwrite to replace)", key)
 			skipped++
 			continue
 		}
 
-		encryptedValue, err := useCase.encryptionService.Encrypt(
+		encryptedValue, err := uc.encryptionService.Encrypt(
 			[]byte(value),
 			vault.Meta.Salt,
 			vault.Passphrase(),
@@ -96,7 +94,7 @@ func (useCase *ImportEnvUseCase) Execute(
 	}
 
 	if imported > 0 {
-		err = useCase.vaultService.Save(ctx, vault)
+		err = uc.vaultService.Save(ctx, vault)
 		if err != nil {
 			return imported, skipped, fmt.Errorf("failed to save vault: %w", err)
 		}

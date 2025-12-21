@@ -31,41 +31,41 @@ func NewPassphraseService(
 }
 
 // Get retrieves a passphrase from environment variable, keyring cache, or user input
-func (service *PassphraseService) Get(ctx context.Context, env string) (string, error) {
+func (s *PassphraseService) Get(ctx context.Context, env string) (string, error) {
 	if env == "" {
 		return "", fmt.Errorf("environment cannot be empty")
 	}
 
-	if passphrase := os.Getenv(service.envVar); passphrase != "" {
+	if passphrase := os.Getenv(s.envVar); passphrase != "" {
 		return passphrase, nil
 	}
 
-	key := service.getKeyringKey(env)
-	passphrase, err := service.cache.Get(key)
+	key := s.getKeyringKey(env)
+	passphrase, err := s.cache.Get(key)
 	if err == nil && passphrase != "" {
 		return passphrase, nil
 	}
 
-	return service.getFromUser(ctx, env)
+	return s.getFromUser(ctx, env)
 }
 
 // Clear clears a cached passphrase for an environment
-func (service *PassphraseService) Clear(ctx context.Context, env string) error {
+func (s *PassphraseService) Clear(ctx context.Context, env string) error {
 	if env == "" {
 		return fmt.Errorf("environment cannot be empty")
 	}
-	key := service.getKeyringKey(env)
+	key := s.getKeyringKey(env)
 
-	return service.cache.Delete(key)
+	return s.cache.Delete(key)
 }
 
 // ClearAll clears all cached passphrases
-func (service *PassphraseService) ClearAll(ctx context.Context) error {
-	return service.cache.DeleteAll()
+func (s *PassphraseService) ClearAll(ctx context.Context) error {
+	return s.cache.DeleteAll()
 }
 
 // Validate validates a passphrase against a vault's fingerprint
-func (service *PassphraseService) Validate(
+func (s *PassphraseService) Validate(
 	ctx context.Context,
 	vault *model.Vault,
 	passphrase string,
@@ -80,7 +80,7 @@ func (service *PassphraseService) Validate(
 		return fmt.Errorf("passphrase cannot be empty")
 	}
 
-	return service.cryptoUtil.Verify(vault.Meta.FingerPrint, passphrase)
+	return s.cryptoUtil.Verify(vault.Meta.FingerPrint, passphrase)
 }
 
 // getFromUser prompts the user for a passphrase
@@ -107,6 +107,6 @@ func (s *PassphraseService) getFromUser(ctx context.Context, env string) (string
 }
 
 // getKeyringKey returns the keyring key for an environment
-func (service *PassphraseService) getKeyringKey(env string) string {
+func (s *PassphraseService) getKeyringKey(env string) string {
 	return fmt.Sprintf("env:%s", env)
 }

@@ -15,16 +15,16 @@ import (
 
 // FileVaultRepository implements VaultRepository using the filesystem
 type FileVaultRepository struct {
-	fs     storage.FileSystem
-	config config.VaultConfig
+	fs  storage.FileSystem
+	cfg config.VaultConfig
 }
 
 // NewFileVaultRepository creates a new file-based vault repository
 func NewFileVaultRepository(
 	fs storage.FileSystem,
-	config config.VaultConfig,
+	cfg config.VaultConfig,
 ) repository.VaultRepository {
-	return &FileVaultRepository{fs, config}
+	return &FileVaultRepository{fs, cfg}
 }
 
 // Create creates a new vault file
@@ -33,10 +33,10 @@ func (repo *FileVaultRepository) Create(ctx context.Context, vault *model.Vault)
 		return fmt.Errorf("vault cannot be nil")
 	}
 
-	vaultPath := repo.config.GetVaultPath(vault.Meta.Env)
+	vaultPath := repo.cfg.GetVaultPath(vault.Meta.Env)
 	vault.SetPath(vaultPath)
 
-	if err := repo.fs.MkdirAll(repo.config.BaseDir, repo.config.DirMode); err != nil {
+	if err := repo.fs.MkdirAll(repo.cfg.BaseDir, repo.cfg.DirMode); err != nil {
 		return fmt.Errorf("failed to create vault directory: %w", err)
 	}
 
@@ -57,7 +57,7 @@ func (repo *FileVaultRepository) Load(ctx context.Context, env string) (*model.V
 		return nil, fmt.Errorf("environment cannot be empty")
 	}
 
-	vaultPath := repo.config.GetVaultPath(env)
+	vaultPath := repo.cfg.GetVaultPath(env)
 
 	data, err := repo.fs.ReadFile(vaultPath)
 	if err != nil {
@@ -93,14 +93,14 @@ func (repo *FileVaultRepository) Save(ctx context.Context, vault *model.Vault) e
 
 	vaultPath := vault.Path()
 	if vaultPath == "" {
-		vaultPath = repo.config.GetVaultPath(vault.Meta.Env)
+		vaultPath = repo.cfg.GetVaultPath(vault.Meta.Env)
 		vault.SetPath(vaultPath)
 	}
 
 	// Ensure base directory exists
 	dir := filepath.Dir(vaultPath)
 	if dir != "." && dir != "" {
-		if err := repo.fs.MkdirAll(dir, repo.config.DirMode); err != nil {
+		if err := repo.fs.MkdirAll(dir, repo.cfg.DirMode); err != nil {
 			return fmt.Errorf("failed to create vault directory: %w", err)
 		}
 	}
@@ -110,7 +110,7 @@ func (repo *FileVaultRepository) Save(ctx context.Context, vault *model.Vault) e
 		return fmt.Errorf("failed to marshal vault: %w", err)
 	}
 
-	if err := repo.fs.WriteFile(vaultPath, data, repo.config.FileMode); err != nil {
+	if err := repo.fs.WriteFile(vaultPath, data, repo.cfg.FileMode); err != nil {
 		return fmt.Errorf("failed to write vault file: %w", err)
 	}
 
@@ -123,7 +123,7 @@ func (repo *FileVaultRepository) Exists(ctx context.Context, env string) (bool, 
 		return false, fmt.Errorf("environment cannot be empty")
 	}
 
-	vaultPath := repo.config.GetVaultPath(env)
+	vaultPath := repo.cfg.GetVaultPath(env)
 	_, err := repo.fs.Stat(vaultPath)
 	if err != nil {
 		if os.IsNotExist(err) {

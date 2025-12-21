@@ -15,6 +15,10 @@ const (
 	DefaultSaltSize int = 16
 	// bytesPerKB is the number of bytes in a kilobyte.
 	bytesPerKB uint32 = 1024
+	// DefaultFileMode is the default file mode for vault files (rw-------).
+	DefaultFileMode uint32 = 0o600
+	// DefaultDirMode is the default directory mode for vault directories (rwx------).
+	DefaultDirMode uint32 = 0o700
 )
 
 // EncryptionConfig holds cryptographic configuration
@@ -50,8 +54,8 @@ type VaultConfig struct {
 func DefaultVaultConfig() VaultConfig {
 	return VaultConfig{
 		BaseDir:       ".lockify",
-		FileMode:      0600, // rw-------
-		DirMode:       0700, // rwx------
+		FileMode:      DefaultFileMode,
+		DirMode:       DefaultDirMode,
 		DefaultEnv:    "local",
 		PassphraseEnv: "LOCKIFY_PASSPHRASE",
 	}

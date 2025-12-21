@@ -26,7 +26,7 @@ func NewImportService() service.ImportService {
 }
 
 // FromJSON parses JSON data from a reader and returns a map of key-value pairs.
-func (service *ImportService) FromJSON(r io.Reader) (map[string]string, error) {
+func (s *ImportService) FromJSON(r io.Reader) (map[string]string, error) {
 	var entries map[string]string
 	decoder := json.NewDecoder(r)
 	if err := decoder.Decode(&entries); err != nil {
@@ -35,14 +35,14 @@ func (service *ImportService) FromJSON(r io.Reader) (map[string]string, error) {
 
 	result := make(map[string]string, len(entries))
 	for k, v := range entries {
-		result[k] = fmt.Sprintf("%v", v)
+		result[k] = v
 	}
 
 	return result, nil
 }
 
 // FromDotEnv parses dotenv data from a reader and returns a map of key-value pairs.
-func (service *ImportService) FromDotEnv(r io.Reader) (map[string]string, error) {
+func (s *ImportService) FromDotEnv(r io.Reader) (map[string]string, error) {
 	entries := make(map[string]string)
 	scanner := bufio.NewScanner(r)
 
