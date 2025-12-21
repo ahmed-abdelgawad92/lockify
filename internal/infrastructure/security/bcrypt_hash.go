@@ -20,7 +20,7 @@ func NewBcryptHashService() service.HashService {
 }
 
 // Hash creates a hash of the passphrase (for fingerprinting)
-func (service *BcryptHashService) Hash(passphrase string) (string, error) {
+func (s *BcryptHashService) Hash(passphrase string) (string, error) {
 	if passphrase == "" {
 		return "", fmt.Errorf("passphrase cannot be empty")
 	}
@@ -33,7 +33,7 @@ func (service *BcryptHashService) Hash(passphrase string) (string, error) {
 }
 
 // Verify verifies if a passphrase matches the hash
-func (service *BcryptHashService) Verify(hashedPassphrase, passphrase string) error {
+func (s *BcryptHashService) Verify(hashedPassphrase, passphrase string) error {
 	if hashedPassphrase == "" {
 		return fmt.Errorf("hashed passphrase cannot be empty")
 	}
@@ -45,13 +45,13 @@ func (service *BcryptHashService) Verify(hashedPassphrase, passphrase string) er
 }
 
 // GenerateSalt generates a random salt for encryption key derivation
-func (service *BcryptHashService) GenerateSalt(n int) (string, error) {
+func (s *BcryptHashService) GenerateSalt(n int) (string, error) {
 	if n <= 0 {
 		n = 16
 	}
-	s := make([]byte, n)
-	if _, err := io.ReadFull(rand.Reader, s); err != nil {
+	salt := make([]byte, n)
+	if _, err := io.ReadFull(rand.Reader, salt); err != nil {
 		return "", err
 	}
-	return base64.StdEncoding.EncodeToString(s), nil
+	return base64.StdEncoding.EncodeToString(salt), nil
 }
