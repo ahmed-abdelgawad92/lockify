@@ -123,7 +123,9 @@ func TestHash_ProducesDifferentHashes(t *testing.T) {
 		t.Fatalf("Hash() second call returned unexpected error: %v", err)
 	}
 	if hash1 == hash2 {
-		t.Error("Hash() produced identical hashes for same passphrase (bcrypt should salt internally)")
+		t.Error(
+			"Hash() produced identical hashes for same passphrase (bcrypt should salt internally)",
+		)
 	}
 
 	// Verify both hashes work correctly

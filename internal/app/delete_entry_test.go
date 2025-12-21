@@ -44,5 +44,14 @@ func TestDeleteEntryUseCase_Execute_EntryNotFound(t *testing.T) {
 
 	err := useCase.Execute(context.Background(), envTest, keyTest)
 	assert.NotNil(t, err, "Execute() should return non-existence error, got nil")
-	assert.Contains(t, fmt.Sprintf("key %q not found", keyTest), err.Error(), fmt.Sprintf("Execute() error = %q, want to contain '%s'", err.Error(), fmt.Sprintf("key %q not found", keyTest)))
+	assert.Contains(
+		t,
+		fmt.Sprintf("key %q not found", keyTest),
+		err.Error(),
+		fmt.Sprintf(
+			"Execute() error = %q, want to contain '%s'",
+			err.Error(),
+			fmt.Sprintf("key %q not found", keyTest),
+		),
+	)
 }

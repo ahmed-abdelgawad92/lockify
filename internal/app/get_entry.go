@@ -18,7 +18,10 @@ type GetEntryUseCase struct {
 }
 
 // NewGetEntryUseCase creates a new GetEntryUseCase instance.
-func NewGetEntryUseCase(vaultService service.VaultServiceInterface, encryptionService service.EncryptionService) GetEntryUc {
+func NewGetEntryUseCase(
+	vaultService service.VaultServiceInterface,
+	encryptionService service.EncryptionService,
+) GetEntryUc {
 	return &GetEntryUseCase{vaultService, encryptionService}
 }
 
@@ -34,7 +37,11 @@ func (useCase *GetEntryUseCase) Execute(ctx context.Context, env, key string) (s
 		return "", err
 	}
 
-	value, err := useCase.encryptionService.Decrypt(entry.Value, vault.Meta.Salt, vault.Passphrase())
+	value, err := useCase.encryptionService.Decrypt(
+		entry.Value,
+		vault.Meta.Salt,
+		vault.Passphrase(),
+	)
 	if err != nil {
 		return "", err
 	}

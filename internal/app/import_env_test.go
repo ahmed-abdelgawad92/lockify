@@ -50,7 +50,13 @@ func TestImportEnvUseCase_Execute_Json(t *testing.T) {
 	jsonInput := `{"test-key": "test-value"}`
 	reader := strings.NewReader(jsonInput)
 
-	imported, skipped, err := useCase.Execute(context.Background(), envTest, value.JSON, reader, false)
+	imported, skipped, err := useCase.Execute(
+		context.Background(),
+		envTest,
+		value.JSON,
+		reader,
+		false,
+	)
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -115,7 +121,13 @@ func TestImportEnvUseCase_Execute_Dotenv(t *testing.T) {
 	dotenvInput := "test-key=test-value"
 	reader := strings.NewReader(dotenvInput)
 
-	imported, skipped, err := useCase.Execute(context.Background(), envTest, value.DotEnv, reader, false)
+	imported, skipped, err := useCase.Execute(
+		context.Background(),
+		envTest,
+		value.DotEnv,
+		reader,
+		false,
+	)
 
 	assert.Nil(t, err, fmt.Sprintf("unexpected error: %v", err))
 	assert.Equal(t, 1, imported)
@@ -124,5 +136,10 @@ func TestImportEnvUseCase_Execute_Dotenv(t *testing.T) {
 
 	entry, err := savedVault.GetEntry(keyTest)
 	assert.Nil(t, err, fmt.Sprintf("entry not found in vault: %v", err))
-	assert.Equal(t, encryptedValueTest, entry.Value, fmt.Sprintf("want encrypted value: %q, got: %q", encryptedValueTest, entry.Value))
+	assert.Equal(
+		t,
+		encryptedValueTest,
+		entry.Value,
+		fmt.Sprintf("want encrypted value: %q, got: %q", encryptedValueTest, entry.Value),
+	)
 }

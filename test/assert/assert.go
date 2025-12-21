@@ -131,13 +131,23 @@ func contains[T any, C comparable](needle C, stash T) (bool, error) {
 		if stashString, ok := any(stash).(string); ok {
 			needleString, ok2 := any(needle).(string)
 			if !ok2 {
-				return false, fmt.Errorf("Contains failed: needle must be string when stash is string")
+				return false, fmt.Errorf(
+					"Contains failed: needle must be string when stash is string",
+				)
 			}
 			if !strings.Contains(stashString, needleString) {
-				return false, fmt.Errorf("Contains failed: '%s' does not contain '%s'", stashString, needleString)
+				return false, fmt.Errorf(
+					"Contains failed: '%s' does not contain '%s'",
+					stashString,
+					needleString,
+				)
 			}
 
-			return true, fmt.Errorf("Contains failed: '%s' contains '%s'", stashString, needleString)
+			return true, fmt.Errorf(
+				"Contains failed: '%s' contains '%s'",
+				stashString,
+				needleString,
+			)
 		}
 	case reflect.Slice, reflect.Array:
 		for i := 0; i < stashValue.Len(); i++ {

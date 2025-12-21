@@ -17,7 +17,9 @@ type ClearCachedPassphraseUseCase struct {
 }
 
 // NewClearCachedPassphraseUseCase creates a new ClearCachedPassphraseUseCase instance.
-func NewClearCachedPassphraseUseCase(passphraseService service.PassphraseService) ClearCachedPassphraseUc {
+func NewClearCachedPassphraseUseCase(
+	passphraseService service.PassphraseService,
+) ClearCachedPassphraseUc {
 	return &ClearCachedPassphraseUseCase{passphraseService}
 }
 

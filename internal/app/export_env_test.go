@@ -33,7 +33,12 @@ func TestExportEnvUseCase_Execute_Json(t *testing.T) {
 
 	var got map[string]string
 	json.Unmarshal([]byte(loggerService.OutputLogs[0]), &got)
-	assert.Equal(t, got[keyTest], valueTest, fmt.Sprintf("want: %q, got: %q", valueTest, got[keyTest]))
+	assert.Equal(
+		t,
+		got[keyTest],
+		valueTest,
+		fmt.Sprintf("want: %q, got: %q", valueTest, got[keyTest]),
+	)
 }
 
 func TestExportEnvUseCase_Execute_Dotenv(t *testing.T) {

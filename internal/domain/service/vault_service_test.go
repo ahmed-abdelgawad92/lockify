@@ -31,7 +31,11 @@ func createVaultServiceWithMocks(
 // Tests
 // ============================================================================
 func TestCreate_Success(t *testing.T) {
-	vaultService := createVaultServiceWithMocks(&test.MockVaultRepository{}, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		&test.MockVaultRepository{},
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 	vault, err := vaultService.Create(context.Background(), "test")
 	if err != nil {
 		t.Fatalf("Create() returned unexpected error: %v", err)
@@ -59,7 +63,11 @@ func TestCreate_VaultAlreadyExists(t *testing.T) {
 			return true, nil
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	_, err := vaultService.Create(context.Background(), "test")
 	if err == nil {
@@ -76,14 +84,21 @@ func TestCreate_RepositoryExistsError(t *testing.T) {
 			return false, errors.New("repository error")
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	_, err := vaultService.Create(context.Background(), "test")
 	if err == nil {
 		t.Fatal("Create() with repository error expected error, got nil")
 	}
 	if !strings.Contains(err.Error(), "failed to check vault existence") {
-		t.Errorf("Create() error = %q, want to contain 'failed to check vault existence'", err.Error())
+		t.Errorf(
+			"Create() error = %q, want to contain 'failed to check vault existence'",
+			err.Error(),
+		)
 	}
 }
 
@@ -93,7 +108,11 @@ func TestCreate_PassphraseGetError(t *testing.T) {
 			return "", errors.New("passphrase error")
 		},
 	}
-	vaultService := createVaultServiceWithMocks(&test.MockVaultRepository{}, passphrase, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		&test.MockVaultRepository{},
+		passphrase,
+		&test.MockHashService{},
+	)
 
 	_, err := vaultService.Create(context.Background(), "test")
 	if err == nil {
@@ -110,7 +129,11 @@ func TestCreate_HashError(t *testing.T) {
 			return "", errors.New("hash error")
 		},
 	}
-	vaultService := createVaultServiceWithMocks(&test.MockVaultRepository{}, &test.MockPassphraseService{}, hash)
+	vaultService := createVaultServiceWithMocks(
+		&test.MockVaultRepository{},
+		&test.MockPassphraseService{},
+		hash,
+	)
 
 	_, err := vaultService.Create(context.Background(), "test")
 	if err == nil {
@@ -127,7 +150,11 @@ func TestCreate_GenerateSaltError(t *testing.T) {
 			return "", errors.New("salt error")
 		},
 	}
-	vaultService := createVaultServiceWithMocks(&test.MockVaultRepository{}, &test.MockPassphraseService{}, hash)
+	vaultService := createVaultServiceWithMocks(
+		&test.MockVaultRepository{},
+		&test.MockPassphraseService{},
+		hash,
+	)
 
 	_, err := vaultService.Create(context.Background(), "test")
 	if err == nil {
@@ -144,7 +171,11 @@ func TestCreate_RepositoryCreateError(t *testing.T) {
 			return errors.New("create error")
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	_, err := vaultService.Create(context.Background(), "test")
 	if err == nil {
@@ -165,7 +196,11 @@ func TestOpen_Success(t *testing.T) {
 			return testVault, nil
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	vault, err := vaultService.Open(context.Background(), "test")
 	if err != nil {
@@ -188,14 +223,22 @@ func TestOpen_VaultDoesNotExist(t *testing.T) {
 			return false, nil
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	_, err := vaultService.Open(context.Background(), "test")
 	if err == nil {
 		t.Fatal("Open() with non-existent vault expected error, got nil")
 	}
-	if !strings.Contains(err.Error(), "vault for env") || !strings.Contains(err.Error(), "does not exist") {
-		t.Errorf("Open() error = %q, want to contain 'vault for env' and 'does not exist'", err.Error())
+	if !strings.Contains(err.Error(), "vault for env") ||
+		!strings.Contains(err.Error(), "does not exist") {
+		t.Errorf(
+			"Open() error = %q, want to contain 'vault for env' and 'does not exist'",
+			err.Error(),
+		)
 	}
 }
 
@@ -230,7 +273,11 @@ func TestOpen_RepositoryLoadError(t *testing.T) {
 			return nil, errors.New("load error")
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	_, err := vaultService.Open(context.Background(), "test")
 	if err == nil {
@@ -287,7 +334,11 @@ func TestSave_Success(t *testing.T) {
 			return nil
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	err := vaultService.Save(context.Background(), vault)
 	if err != nil {
@@ -305,7 +356,11 @@ func TestSave_RepositoryError(t *testing.T) {
 			return errors.New("save error")
 		},
 	}
-	vaultService := createVaultServiceWithMocks(repo, &test.MockPassphraseService{}, &test.MockHashService{})
+	vaultService := createVaultServiceWithMocks(
+		repo,
+		&test.MockPassphraseService{},
+		&test.MockHashService{},
+	)
 
 	err := vaultService.Save(context.Background(), vault)
 	if err == nil {

@@ -72,7 +72,11 @@ func (repo *FileVaultRepository) Load(ctx context.Context, env string) (*model.V
 	vault.SetPath(vaultPath)
 
 	if vault.Meta.Env != env {
-		return nil, fmt.Errorf("vault environment mismatch: expected %q, got %q", env, vault.Meta.Env)
+		return nil, fmt.Errorf(
+			"vault environment mismatch: expected %q, got %q",
+			env,
+			vault.Meta.Env,
+		)
 	}
 
 	return &vault, nil

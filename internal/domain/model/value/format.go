@@ -16,7 +16,12 @@ const (
 func NewFileFormat(value string) (FileFormat, error) {
 	format := FileFormat(value)
 	if !format.IsValid() {
-		return "", fmt.Errorf("invalid file format %q: must be either %q or %q", value, JSON, DotEnv)
+		return "", fmt.Errorf(
+			"invalid file format %q: must be either %q or %q",
+			value,
+			JSON,
+			DotEnv,
+		)
 	}
 	return format, nil
 }

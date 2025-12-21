@@ -40,7 +40,11 @@ func (useCase *AddEntryUseCase) Execute(ctx context.Context, dto AddEntryDTO) er
 		return fmt.Errorf("failed to open vault for environment %s: %w", dto.Env, err)
 	}
 
-	encryptedValue, err := useCase.encryptionService.Encrypt([]byte(dto.Value), vault.Meta.Salt, vault.Passphrase())
+	encryptedValue, err := useCase.encryptionService.Encrypt(
+		[]byte(dto.Value),
+		vault.Meta.Salt,
+		vault.Passphrase(),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to encrypt value: %w", err)
 	}

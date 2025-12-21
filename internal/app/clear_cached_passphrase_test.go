@@ -37,5 +37,10 @@ func TestClearCachedPassphraseUseCase_Execute_Error(t *testing.T) {
 
 	err := useCase.Execute(context.Background())
 	assert.NotNil(t, err, "Execute() with ClearAll error expected error, got nil")
-	assert.Equal(t, err.Error(), "clear all error", fmt.Sprintf("Execute() error = %q, want %q", err.Error(), "clear all error"))
+	assert.Equal(
+		t,
+		err.Error(),
+		"clear all error",
+		fmt.Sprintf("Execute() error = %q, want %q", err.Error(), "clear all error"),
+	)
 }

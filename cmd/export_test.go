@@ -17,7 +17,11 @@ type mockExportUseCase struct {
 	receivedFormat value.FileFormat
 }
 
-func (m *mockExportUseCase) Execute(ctx context.Context, env string, exportFormat value.FileFormat) error {
+func (m *mockExportUseCase) Execute(
+	ctx context.Context,
+	env string,
+	exportFormat value.FileFormat,
+) error {
 	m.receivedEnv = env
 	m.receivedFormat = exportFormat
 	if m.executeFunc != nil {

@@ -12,7 +12,13 @@ import (
 
 // ImportEnvUc defines the interface for importing entries into the vault.
 type ImportEnvUc interface {
-	Execute(ctx context.Context, env string, format value.FileFormat, r io.Reader, overwrite bool) (int, int, error)
+	Execute(
+		ctx context.Context,
+		env string,
+		format value.FileFormat,
+		r io.Reader,
+		overwrite bool,
+	) (int, int, error)
 }
 
 // ImportEnvUseCase implements the use case for importing entries into the vault.
@@ -68,7 +74,11 @@ func (useCase *ImportEnvUseCase) Execute(ctx context.Context, env string, format
 			continue
 		}
 
-		encryptedValue, err := useCase.encryptionService.Encrypt([]byte(value), vault.Meta.Salt, vault.Passphrase())
+		encryptedValue, err := useCase.encryptionService.Encrypt(
+			[]byte(value),
+			vault.Meta.Salt,
+			vault.Passphrase(),
+		)
 		if err != nil {
 			return imported, skipped, fmt.Errorf("failed to encrypt value: %w", err)
 		}

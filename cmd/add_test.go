@@ -59,7 +59,9 @@ func TestAddCommand_Success(t *testing.T) {
 		t.Fatalf("RunE returned unexpected error: %v", err)
 	}
 
-	if mockUseCase.receivedDTO.Env != addTestConstants.env || mockUseCase.receivedDTO.Key != addTestConstants.key || mockUseCase.receivedDTO.Value != addTestConstants.value {
+	if mockUseCase.receivedDTO.Env != addTestConstants.env ||
+		mockUseCase.receivedDTO.Key != addTestConstants.key ||
+		mockUseCase.receivedDTO.Value != addTestConstants.value {
 		t.Fatalf("unexpected DTO: %+v", mockUseCase.receivedDTO)
 	}
 	if len(mockLogger.ProgressLogs) == 0 {

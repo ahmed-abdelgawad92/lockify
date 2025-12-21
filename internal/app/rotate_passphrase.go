@@ -31,7 +31,10 @@ func NewRotatePassphraseUseCase(
 }
 
 // Execute rotates the passphrase for a vault by re-encrypting all entries with the new passphrase.
-func (useCase *RotatePassphraseUseCase) Execute(ctx context.Context, env, currentPassphrase, newPassphrase string) error {
+func (useCase *RotatePassphraseUseCase) Execute(
+	ctx context.Context,
+	env, currentPassphrase, newPassphrase string,
+) error {
 	vault, err := useCase.vaultRepo.Load(ctx, env)
 	if err != nil {
 		return fmt.Errorf("failed to open vault for environment %s: %w", env, err)
@@ -55,12 +58,20 @@ func (useCase *RotatePassphraseUseCase) Execute(ctx context.Context, env, curren
 
 	for key := range vault.Entries {
 		entry := vault.Entries[key]
-		decryptedValue, err := useCase.encryptionService.Decrypt(entry.Value, currentSalt, currentPassphrase)
+		decryptedValue, err := useCase.encryptionService.Decrypt(
+			entry.Value,
+			currentSalt,
+			currentPassphrase,
+		)
 		if err != nil {
 			return fmt.Errorf("failed to decrypt key %s: %w", key, err)
 		}
 
-		encryptedValue, err := useCase.encryptionService.Encrypt(decryptedValue, newSalt, newPassphrase)
+		encryptedValue, err := useCase.encryptionService.Encrypt(
+			decryptedValue,
+			newSalt,
+			newPassphrase,
+		)
 		if err != nil {
 			return fmt.Errorf("failed to encrypt key %s: %w", key, err)
 		}

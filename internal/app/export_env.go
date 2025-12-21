@@ -32,7 +32,11 @@ func NewExportEnvUseCase(
 }
 
 // Execute exports all entries from the vault in the specified format.
-func (useCase *ExportEnvUseCase) Execute(ctx context.Context, env string, exportFormat value.FileFormat) error {
+func (useCase *ExportEnvUseCase) Execute(
+	ctx context.Context,
+	env string,
+	exportFormat value.FileFormat,
+) error {
 	vault, err := useCase.vaultService.Open(ctx, env)
 	if err != nil {
 		return err
@@ -40,7 +44,11 @@ func (useCase *ExportEnvUseCase) Execute(ctx context.Context, env string, export
 
 	if exportFormat.IsDotEnv() {
 		for k, v := range vault.Entries {
-			decryptedVal, err := useCase.encryptionService.Decrypt(v.Value, vault.Meta.Salt, vault.Passphrase())
+			decryptedVal, err := useCase.encryptionService.Decrypt(
+				v.Value,
+				vault.Meta.Salt,
+				vault.Passphrase(),
+			)
 			if err != nil {
 				return fmt.Errorf("failed to decrypt value: %v", err)
 			}
@@ -49,7 +57,11 @@ func (useCase *ExportEnvUseCase) Execute(ctx context.Context, env string, export
 	} else {
 		mappedEntries := make(map[string]string)
 		for k, v := range vault.Entries {
-			decryptedVal, err := useCase.encryptionService.Decrypt(v.Value, vault.Meta.Salt, vault.Passphrase())
+			decryptedVal, err := useCase.encryptionService.Decrypt(
+				v.Value,
+				vault.Meta.Salt,
+				vault.Passphrase(),
+			)
 			if err != nil {
 				return fmt.Errorf("failed to decrypt value: %v", err)
 			}

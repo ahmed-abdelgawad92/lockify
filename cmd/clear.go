@@ -14,7 +14,10 @@ type ClearCommand struct {
 }
 
 // NewClearCommand creates a new clear command instance.
-func NewClearCommand(buildClearCachedPassphraseUc func() app.ClearCachedPassphraseUc, logger domain.Logger) *cobra.Command {
+func NewClearCommand(
+	buildClearCachedPassphraseUc func() app.ClearCachedPassphraseUc,
+	logger domain.Logger,
+) *cobra.Command {
 	cmd := &ClearCommand{buildClearCachedPassphraseUc, logger}
 
 	// lockify cache clear

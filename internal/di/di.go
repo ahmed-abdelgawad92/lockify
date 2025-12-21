@@ -29,7 +29,11 @@ func getCacheService() service.Cache {
 }
 
 func getPassphraseService() service.PassphraseService {
-	return security.NewPassphraseService(getCacheService(), getHashService(), vaultConfig.PassphraseEnv)
+	return security.NewPassphraseService(
+		getCacheService(),
+		getHashService(),
+		vaultConfig.PassphraseEnv,
+	)
 }
 
 func getEncryptionService() service.EncryptionService {
@@ -104,10 +108,19 @@ func BuildListEntries() app.ListEntriesUc {
 
 // BuildRotatePassphrase creates and returns a RotatePassphrase use case.
 func BuildRotatePassphrase() app.RotatePassphraseUc {
-	return app.NewRotatePassphraseUseCase(getVaultRepository(), getEncryptionService(), getHashService())
+	return app.NewRotatePassphraseUseCase(
+		getVaultRepository(),
+		getEncryptionService(),
+		getHashService(),
+	)
 }
 
 // BuildImportEnv creates and returns an ImportEnv use case.
 func BuildImportEnv() app.ImportEnvUc {
-	return app.NewImportEnvUseCase(getVaultService(), getImportService(), getEncryptionService(), GetLogger())
+	return app.NewImportEnvUseCase(
+		getVaultService(),
+		getImportService(),
+		getEncryptionService(),
+		GetLogger(),
+	)
 }

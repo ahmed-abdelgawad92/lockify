@@ -65,7 +65,9 @@ func TestEncrypt_SamePlaintextProducesDifferentCiphertexts(t *testing.T) {
 	}
 
 	if ciphertext1 == ciphertext2 {
-		t.Error("Encrypt() produced identical ciphertexts for same plaintext (nonce should be random)")
+		t.Error(
+			"Encrypt() produced identical ciphertexts for same plaintext (nonce should be random)",
+		)
 	}
 }
 

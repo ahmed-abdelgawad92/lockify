@@ -18,7 +18,11 @@ type AddCommand struct {
 }
 
 // NewAddCommand creates a new add command instance.
-func NewAddCommand(useCase app.AddEntryUc, prompt service.PromptService, logger domain.Logger) (*cobra.Command, error) {
+func NewAddCommand(
+	useCase app.AddEntryUc,
+	prompt service.PromptService,
+	logger domain.Logger,
+) (*cobra.Command, error) {
 	cmd := &AddCommand{useCase, prompt, logger}
 
 	// lockify add --env [env]
@@ -35,7 +39,12 @@ func NewAddCommand(useCase app.AddEntryUc, prompt service.PromptService, logger 
 	}
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
-	cobraCmd.Flags().BoolP("secret", "s", false, "States that value to set is a secret and should be hidden in the terminal")
+	cobraCmd.Flags().BoolP(
+		"secret",
+		"s",
+		false,
+		"States that value to set is a secret and should be hidden in the terminal",
+	)
 	err := cobraCmd.MarkFlagRequired("env")
 	if err != nil {
 		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)

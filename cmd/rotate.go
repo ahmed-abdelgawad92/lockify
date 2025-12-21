@@ -18,7 +18,11 @@ type RotateCommand struct {
 }
 
 // NewRotateCommand creates a new rotate-key command instance.
-func NewRotateCommand(useCase app.RotatePassphraseUc, prompt service.PromptService, logger domain.Logger) (*cobra.Command, error) {
+func NewRotateCommand(
+	useCase app.RotatePassphraseUc,
+	prompt service.PromptService,
+	logger domain.Logger,
+) (*cobra.Command, error) {
 	cmd := &RotateCommand{useCase, prompt, logger}
 
 	// lockify rotate-key --env [env]
@@ -78,7 +82,11 @@ func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	rotateCmd, err := NewRotateCommand(di.BuildRotatePassphrase(), di.BuildPromptService(), di.GetLogger())
+	rotateCmd, err := NewRotateCommand(
+		di.BuildRotatePassphrase(),
+		di.BuildPromptService(),
+		di.GetLogger(),
+	)
 	if err != nil {
 		panic(err)
 	}

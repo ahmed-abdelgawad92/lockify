@@ -47,9 +47,11 @@ func TestInitCommand_Success(t *testing.T) {
 
 func TestInitCommand_Failed(t *testing.T) {
 	errMsg := "error during execution"
-	mockUseCase := &mockInitUseCase{executeFunc: func(ctx context.Context, env string) (*model.Vault, error) {
-		return nil, fmt.Errorf("%s", errMsg)
-	}}
+	mockUseCase := &mockInitUseCase{
+		executeFunc: func(ctx context.Context, env string) (*model.Vault, error) {
+			return nil, fmt.Errorf("%s", errMsg)
+		},
+	}
 	mockLogger := &test.MockLogger{}
 
 	cmd, _ := NewInitCommand(mockUseCase, mockLogger)

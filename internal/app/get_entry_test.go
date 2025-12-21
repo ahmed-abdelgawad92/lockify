@@ -32,7 +32,12 @@ func TestGetEntryUseCase_Execute_Success(t *testing.T) {
 
 	valueRetrieved, err := useCase.Execute(context.Background(), envTest, keyTest)
 	assert.Nil(t, err, fmt.Sprintf("Execute() returned unexpected error: %v", err))
-	assert.Equal(t, valueTest, valueRetrieved, fmt.Sprintf("Execute() got %s, want %s", valueRetrieved, valueTest))
+	assert.Equal(
+		t,
+		valueTest,
+		valueRetrieved,
+		fmt.Sprintf("Execute() got %s, want %s", valueRetrieved, valueTest),
+	)
 }
 
 func TestGetEntryUseCase_Execute_EntryNotFound(t *testing.T) {
@@ -55,5 +60,14 @@ func TestGetEntryUseCase_Execute_EntryNotFound(t *testing.T) {
 
 	_, err := useCase.Execute(context.Background(), envTest, keyTest)
 	assert.NotNil(t, err, "Execute() should return non-existence error, got nil")
-	assert.Contains(t, fmt.Sprintf("key %q not found", keyTest), err.Error(), fmt.Sprintf("Execute() error = %q, want to contain '%s'", err.Error(), fmt.Sprintf("key %q not found", keyTest)))
+	assert.Contains(
+		t,
+		fmt.Sprintf("key %q not found", keyTest),
+		err.Error(),
+		fmt.Sprintf(
+			"Execute() error = %q, want to contain '%s'",
+			err.Error(),
+			fmt.Sprintf("key %q not found", keyTest),
+		),
+	)
 }

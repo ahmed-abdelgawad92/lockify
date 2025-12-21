@@ -23,6 +23,9 @@ func NewInitializeVaultUseCase(vaultService service.VaultServiceInterface) InitU
 }
 
 // Execute initializes a new vault for the specified environment.
-func (useCase *InitializeVaultUseCase) Execute(ctx context.Context, env string) (*model.Vault, error) {
+func (useCase *InitializeVaultUseCase) Execute(
+	ctx context.Context,
+	env string,
+) (*model.Vault, error) {
 	return useCase.vaultService.Create(ctx, env)
 }

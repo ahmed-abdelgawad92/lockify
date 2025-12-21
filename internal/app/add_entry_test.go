@@ -42,7 +42,11 @@ func TestAddEntryUseCase_Execute_Success(t *testing.T) {
 	encryptionService := &test.MockEncryptionService{
 		EncryptFunc: func(plaintext []byte, encodedSalt, pwd string) (string, error) {
 			if string(plaintext) != valueTest {
-				t.Errorf("Encrypt() called with plaintext %q, want %q", string(plaintext), valueTest)
+				t.Errorf(
+					"Encrypt() called with plaintext %q, want %q",
+					string(plaintext),
+					valueTest,
+				)
 			}
 			if encodedSalt != saltTest {
 				t.Errorf("Encrypt() called with salt %q, want %q", encodedSalt, saltTest)
@@ -63,11 +67,32 @@ func TestAddEntryUseCase_Execute_Success(t *testing.T) {
 	})
 
 	assert.Nil(t, err, fmt.Sprintf("Execute() returned unexpected error: %v", err))
-	assert.NotNil(t, savedVault, "Execute() should call Save() with the vault, but Save() was not called")
+	assert.NotNil(
+		t,
+		savedVault,
+		"Execute() should call Save() with the vault, but Save() was not called",
+	)
 
 	entry, err := savedVault.GetEntry(keyTest)
-	assert.Nil(t, err, fmt.Sprintf("Execute() should add entry with key %q, but GetEntry() failed: %v", keyTest, err))
-	assert.Equal(t, entry.Value, encryptedValueTest, fmt.Sprintf("Execute() added entry with value %q, want %q", entry.Value, encryptedValueTest))
+	assert.Nil(
+		t,
+		err,
+		fmt.Sprintf(
+			"Execute() should add entry with key %q, but GetEntry() failed: %v",
+			keyTest,
+			err,
+		),
+	)
+	assert.Equal(
+		t,
+		entry.Value,
+		encryptedValueTest,
+		fmt.Sprintf(
+			"Execute() added entry with value %q, want %q",
+			entry.Value,
+			encryptedValueTest,
+		),
+	)
 }
 
 func TestAddEntryUseCase_Execute_VaultOpenError(t *testing.T) {
@@ -102,7 +127,12 @@ func TestAddEntryUseCase_Execute_EncryptionError(t *testing.T) {
 	})
 
 	assert.NotNil(t, err, "Execute() should return encryption error, got nil")
-	assert.Contains(t, "failed to encrypt value", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'failed to encrypt value'", err.Error()))
+	assert.Contains(
+		t,
+		"failed to encrypt value",
+		err.Error(),
+		fmt.Sprintf("Execute() error = %q, want to contain 'failed to encrypt value'", err.Error()),
+	)
 }
 
 func TestAddEntryUseCase_Execute_SaveError(t *testing.T) {
@@ -119,5 +149,10 @@ func TestAddEntryUseCase_Execute_SaveError(t *testing.T) {
 	})
 
 	assert.NotNil(t, err, "Execute() should return save error, got nil")
-	assert.Contains(t, "save failed", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'save failed'", err.Error()))
+	assert.Contains(
+		t,
+		"save failed",
+		err.Error(),
+		fmt.Sprintf("Execute() error = %q, want to contain 'save failed'", err.Error()),
+	)
 }

@@ -17,7 +17,10 @@ type mockRotateUseCase struct {
 	receivedNewPassphrase     string
 }
 
-func (m *mockRotateUseCase) Execute(ctx context.Context, env, currentPassphrase, newPassphrase string) error {
+func (m *mockRotateUseCase) Execute(
+	ctx context.Context,
+	env, currentPassphrase, newPassphrase string,
+) error {
 	m.receivedEnv = env
 	m.receivedCurrentPassphrase = currentPassphrase
 	m.receivedNewPassphrase = newPassphrase

@@ -45,7 +45,11 @@ func TestRotatePassphraseUseCase_Execute_Success(t *testing.T) {
 				t.Errorf("Decrypt() called with salt %q, want %q", encodedSalt, currentSalt)
 			}
 			if passphrase != currentPassphrase {
-				t.Errorf("Decrypt() called with passphrase %q, want %q", passphrase, currentPassphrase)
+				t.Errorf(
+					"Decrypt() called with passphrase %q, want %q",
+					passphrase,
+					currentPassphrase,
+				)
 			}
 			return []byte("decrypted-value"), nil
 		},
@@ -64,10 +68,18 @@ func TestRotatePassphraseUseCase_Execute_Success(t *testing.T) {
 	hashService := &test.MockHashService{
 		VerifyFunc: func(hashedPassphrase, passphrase string) error {
 			if hashedPassphrase != currentFingerprint {
-				t.Errorf("Verify() called with fingerprint %q, want %q", hashedPassphrase, currentFingerprint)
+				t.Errorf(
+					"Verify() called with fingerprint %q, want %q",
+					hashedPassphrase,
+					currentFingerprint,
+				)
 			}
 			if passphrase != currentPassphrase {
-				t.Errorf("Verify() called with passphrase %q, want %q", passphrase, currentPassphrase)
+				t.Errorf(
+					"Verify() called with passphrase %q, want %q",
+					passphrase,
+					currentPassphrase,
+				)
 			}
 			return nil
 		},
@@ -91,20 +103,58 @@ func TestRotatePassphraseUseCase_Execute_Success(t *testing.T) {
 	assert.Nil(t, err, fmt.Sprintf("Execute() returned unexpected error: %v", err))
 
 	// Verify vault was saved with new salt and fingerprint
-	assert.NotNil(t, savedVault, "Execute() should call Save() with the vault, but Save() was not called")
-	assert.Equal(t, newSalt, savedVault.Meta.Salt, fmt.Sprintf("Execute() should update salt to %q, got %q", newSalt, savedVault.Meta.Salt))
-	assert.Equal(t, newFingerprint, savedVault.Meta.FingerPrint, fmt.Sprintf("Execute() should update fingerprint to %q, got %q", newFingerprint, savedVault.Meta.FingerPrint))
+	assert.NotNil(
+		t,
+		savedVault,
+		"Execute() should call Save() with the vault, but Save() was not called",
+	)
+	assert.Equal(
+		t,
+		newSalt,
+		savedVault.Meta.Salt,
+		fmt.Sprintf("Execute() should update salt to %q, got %q", newSalt, savedVault.Meta.Salt),
+	)
+	assert.Equal(
+		t,
+		newFingerprint,
+		savedVault.Meta.FingerPrint,
+		fmt.Sprintf(
+			"Execute() should update fingerprint to %q, got %q",
+			newFingerprint,
+			savedVault.Meta.FingerPrint,
+		),
+	)
 
 	// Verify all entries were re-encrypted
-	assert.Equal(t, 2, decryptCallCount, fmt.Sprintf("Execute() should decrypt 2 entries, decrypted %d", decryptCallCount))
-	assert.Equal(t, 2, encryptCallCount, fmt.Sprintf("Execute() should encrypt 2 entries, encrypted %d", encryptCallCount))
+	assert.Equal(
+		t,
+		2,
+		decryptCallCount,
+		fmt.Sprintf("Execute() should decrypt 2 entries, decrypted %d", decryptCallCount),
+	)
+	assert.Equal(
+		t,
+		2,
+		encryptCallCount,
+		fmt.Sprintf("Execute() should encrypt 2 entries, encrypted %d", encryptCallCount),
+	)
 
 	// Verify entries have new encrypted values
 	entry1, _ := savedVault.GetEntry("key1")
 	entry2, _ := savedVault.GetEntry("key2")
 
-	assert.Equal(t, "new-encrypted-value", entry1.Value, fmt.Sprintf("Execute() should update entry1 value, got %q", entry1.Value))
-	assert.Equal(t, "new-encrypted-value", entry2.Value, fmt.Sprintf("Execute() should update entry2 value, got %q", entry2.Value))
+	assert.Equal(
+		t,
+		"new-encrypted-value",
+		entry1.Value,
+		fmt.Sprintf("Execute() should update entry1 value, got %q", entry1.Value),
+	)
+	assert.Equal(
+		t,
+		"new-encrypted-value",
+		entry2.Value,
+		fmt.Sprintf("Execute() should update entry2 value, got %q", entry2.Value),
+	)
 }
 
 func TestRotatePassphraseUseCase_Execute_LoadError(t *testing.T) {
@@ -114,11 +164,23 @@ func TestRotatePassphraseUseCase_Execute_LoadError(t *testing.T) {
 		},
 	}
 
-	useCase := NewRotatePassphraseUseCase(vaultRepo, &test.MockEncryptionService{}, &test.MockHashService{})
+	useCase := NewRotatePassphraseUseCase(
+		vaultRepo,
+		&test.MockEncryptionService{},
+		&test.MockHashService{},
+	)
 
 	err := useCase.Execute(context.Background(), envTest, "old", "new")
 	assert.NotNil(t, err, "Execute() with load error expected error, got nil")
-	assert.Contains(t, "failed to open vault for environment", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'failed to open vault for environment'", err.Error()))
+	assert.Contains(
+		t,
+		"failed to open vault for environment",
+		err.Error(),
+		fmt.Sprintf(
+			"Execute() error = %q, want to contain 'failed to open vault for environment'",
+			err.Error(),
+		),
+	)
 }
 
 func TestRotatePassphraseUseCase_Execute_VerifyError(t *testing.T) {
@@ -139,7 +201,12 @@ func TestRotatePassphraseUseCase_Execute_VerifyError(t *testing.T) {
 
 	err := useCase.Execute(context.Background(), envTest, "wrong", "new")
 	assert.NotNil(t, err, "Execute() with invalid passphrase expected error, got nil")
-	assert.Contains(t, "invalid credentials", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'invalid credentials'", err.Error()))
+	assert.Contains(
+		t,
+		"invalid credentials",
+		err.Error(),
+		fmt.Sprintf("Execute() error = %q, want to contain 'invalid credentials'", err.Error()),
+	)
 }
 
 func TestRotatePassphraseUseCase_Execute_GenerateSaltError(t *testing.T) {
@@ -163,7 +230,12 @@ func TestRotatePassphraseUseCase_Execute_GenerateSaltError(t *testing.T) {
 
 	err := useCase.Execute(context.Background(), envTest, "old", "new")
 	assert.NotNil(t, err, "Execute() with salt error expected error, got nil")
-	assert.Contains(t, "failed to generate salt", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'failed to generate salt'", err.Error()))
+	assert.Contains(
+		t,
+		"failed to generate salt",
+		err.Error(),
+		fmt.Sprintf("Execute() error = %q, want to contain 'failed to generate salt'", err.Error()),
+	)
 }
 
 func TestRotatePassphraseUseCase_Execute_HashError(t *testing.T) {
@@ -190,7 +262,15 @@ func TestRotatePassphraseUseCase_Execute_HashError(t *testing.T) {
 
 	err := useCase.Execute(context.Background(), envTest, "old", "new")
 	assert.NotNil(t, err, "Execute() with hash error expected error, got nil")
-	assert.Contains(t, "failed to hash the fingerprint", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'failed to hash the fingerprint'", err.Error()))
+	assert.Contains(
+		t,
+		"failed to hash the fingerprint",
+		err.Error(),
+		fmt.Sprintf(
+			"Execute() error = %q, want to contain 'failed to hash the fingerprint'",
+			err.Error(),
+		),
+	)
 }
 
 func TestRotatePassphraseUseCase_Execute_DecryptError(t *testing.T) {
@@ -226,7 +306,12 @@ func TestRotatePassphraseUseCase_Execute_DecryptError(t *testing.T) {
 
 	err := useCase.Execute(context.Background(), envTest, "old", "new")
 	assert.NotNil(t, err, "Execute() with decrypt error expected error, got nil")
-	assert.Contains(t, "failed to decrypt key", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'failed to decrypt key'", err.Error()))
+	assert.Contains(
+		t,
+		"failed to decrypt key",
+		err.Error(),
+		fmt.Sprintf("Execute() error = %q, want to contain 'failed to decrypt key'", err.Error()),
+	)
 }
 
 func TestRotatePassphraseUseCase_Execute_EncryptError(t *testing.T) {
@@ -265,7 +350,12 @@ func TestRotatePassphraseUseCase_Execute_EncryptError(t *testing.T) {
 
 	err := useCase.Execute(context.Background(), envTest, "old", "new")
 	assert.NotNil(t, err, "Execute() with encrypt error expected error, got nil")
-	assert.Contains(t, "failed to encrypt key", err.Error(), fmt.Sprintf("Execute() error = %q, want to contain 'failed to encrypt key'", err.Error()))
+	assert.Contains(
+		t,
+		"failed to encrypt key",
+		err.Error(),
+		fmt.Sprintf("Execute() error = %q, want to contain 'failed to encrypt key'", err.Error()),
+	)
 }
 
 func TestRotatePassphraseUseCase_Execute_SaveError(t *testing.T) {
@@ -295,5 +385,10 @@ func TestRotatePassphraseUseCase_Execute_SaveError(t *testing.T) {
 
 	err := useCase.Execute(context.Background(), envTest, "old", "new")
 	assert.NotNil(t, err, "Execute() with save error expected error, got nil")
-	assert.Equal(t, "save error", err.Error(), fmt.Sprintf("Execute() error = %q, want %q", err.Error(), "save error"))
+	assert.Equal(
+		t,
+		"save error",
+		err.Error(),
+		fmt.Sprintf("Execute() error = %q, want %q", err.Error(), "save error"),
+	)
 }

@@ -58,7 +58,10 @@ func (e *AESEncryptionService) getAEAD(encodedSalt, passphrase string) (cipher.A
 }
 
 // Encrypt encrypts plaintext and returns base64-encoded ciphertext
-func (e *AESEncryptionService) Encrypt(plaintext []byte, encodedSalt, passphrase string) (string, error) {
+func (e *AESEncryptionService) Encrypt(
+	plaintext []byte,
+	encodedSalt, passphrase string,
+) (string, error) {
 	if plaintext == nil {
 		return "", fmt.Errorf("plaintext cannot be nil")
 	}
@@ -121,14 +124,25 @@ func (e *AESEncryptionService) Decrypt(ciphertext, encodedSalt, passphrase strin
 func (e *AESEncryptionService) validateCiphertextLength(ciphertext []byte, overhead int) error {
 	minLen := e.cfg.NonceSize + overhead
 	if len(ciphertext) < minLen {
-		return fmt.Errorf("ciphertext too short: expected at least %d bytes, got %d", minLen, len(ciphertext))
+		return fmt.Errorf(
+			"ciphertext too short: expected at least %d bytes, got %d",
+			minLen,
+			len(ciphertext),
+		)
 	}
 	return nil
 }
 
 // deriveKey derives a key from a passphrase using Argon2id
 func deriveKey(passphrase []byte, salt []byte, cfg config.EncryptionConfig) []byte {
-	return argon2.IDKey(passphrase, salt, cfg.ArgonTime, cfg.ArgonMemory, cfg.ArgonThreads, cfg.KeyLength)
+	return argon2.IDKey(
+		passphrase,
+		salt,
+		cfg.ArgonTime,
+		cfg.ArgonMemory,
+		cfg.ArgonThreads,
+		cfg.KeyLength,
+	)
 }
 
 // clearBytes clears sensitive data from memory by overwrites a byte slice with zeros

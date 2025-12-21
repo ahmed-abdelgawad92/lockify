@@ -18,7 +18,11 @@ type PassphraseService struct {
 }
 
 // NewPassphraseService creates a new passphrase service
-func NewPassphraseService(cache service.Cache, cryptoUtil service.HashService, envVar string) service.PassphraseService {
+func NewPassphraseService(
+	cache service.Cache,
+	cryptoUtil service.HashService,
+	envVar string,
+) service.PassphraseService {
 	if envVar == "" {
 		envVar = "LOCKIFY_PASSPHRASE"
 	}
