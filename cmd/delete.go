@@ -9,11 +9,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// DeleteCommand represents the delete command for removing entries from the vault.
 type DeleteCommand struct {
 	useCase app.DeleteEntryUc
 	logger  domain.Logger
 }
 
+// NewDeleteCommand creates a new delete command instance.
 func NewDeleteCommand(useCase app.DeleteEntryUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &DeleteCommand{useCase, logger}
 	// lockify del --env [env] --key [key]

@@ -1,6 +1,6 @@
 package service
 
-// CryptoService provides cryptographic utility operations:
+// HashService provides cryptographic utility operations:
 // - Passphrase hashing and verification (for fingerprints)
 // - Salt generation
 type HashService interface {

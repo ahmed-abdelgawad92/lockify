@@ -6,12 +6,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Version holds the current version of the Lockify CLI.
 var Version = "0.0.0"
 
+// VersionCommand represents the version command for displaying the CLI version.
 type VersionCommand struct {
 	logger domain.Logger
 }
 
+// NewVersionCommand creates a new version command instance.
 func NewVersionCommand(logger domain.Logger) *cobra.Command {
 	cmd := &VersionCommand{logger}
 

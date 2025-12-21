@@ -12,7 +12,7 @@ func TestNewFileFormat(t *testing.T) {
 		{
 			name:    "json format",
 			value:   "json",
-			want:    Json,
+			want:    JSON,
 			wantErr: false,
 		},
 		{
@@ -75,7 +75,7 @@ func TestFileFormat_String(t *testing.T) {
 	}{
 		{
 			name:       "json format",
-			fileFormat: Json,
+			fileFormat: JSON,
 			want:       "json",
 		},
 		{
@@ -95,7 +95,7 @@ func TestFileFormat_String(t *testing.T) {
 	}
 }
 
-func TestFileFormat_IsJson(t *testing.T) {
+func TestFileFormat_IsJSON(t *testing.T) {
 	tests := []struct {
 		name       string
 		fileFormat FileFormat
@@ -103,7 +103,7 @@ func TestFileFormat_IsJson(t *testing.T) {
 	}{
 		{
 			name:       "json format",
-			fileFormat: Json,
+			fileFormat: JSON,
 			want:       true,
 		},
 		{
@@ -115,9 +115,9 @@ func TestFileFormat_IsJson(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.fileFormat.IsJson()
+			got := tt.fileFormat.IsJSON()
 			if got != tt.want {
-				t.Errorf("FileFormat.IsJson() = %v, want %v", got, tt.want)
+				t.Errorf("FileFormat.IsJSON() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -136,7 +136,7 @@ func TestFileFormat_IsDotEnv(t *testing.T) {
 		},
 		{
 			name:       "json format",
-			fileFormat: Json,
+			fileFormat: JSON,
 			want:       false,
 		},
 	}
@@ -159,7 +159,7 @@ func TestFileFormat_IsValid(t *testing.T) {
 	}{
 		{
 			name:       "json format",
-			fileFormat: Json,
+			fileFormat: JSON,
 			want:       true,
 		},
 		{

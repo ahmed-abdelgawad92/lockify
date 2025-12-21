@@ -1,5 +1,6 @@
 package service
 
+// Cache defines the interface for caching operations.
 type Cache interface {
 	// Set stores a value in cache
 	Set(key, value string) error

@@ -14,7 +14,7 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
-// EncryptionService implements domain.EncryptionService
+// AESEncryptionService implements domain.EncryptionService using AES-GCM encryption.
 type AESEncryptionService struct {
 	cfg config.EncryptionConfig
 }

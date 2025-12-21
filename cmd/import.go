@@ -11,11 +11,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ImportCommand represents the import command for importing entries into the vault.
 type ImportCommand struct {
 	useCase app.ImportEnvUc
 	logger  domain.Logger
 }
 
+// NewImportCommand creates a new import command instance.
 func NewImportCommand(useCase app.ImportEnvUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &ImportCommand{useCase, logger}
 

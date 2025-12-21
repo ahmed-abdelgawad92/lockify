@@ -1,5 +1,6 @@
 package domain
 
+// Logger defines the interface for logging operations.
 type Logger interface {
 	// Info writes an info message to logs
 	Info(format string, args ...interface{})

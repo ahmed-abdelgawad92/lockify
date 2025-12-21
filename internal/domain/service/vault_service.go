@@ -8,18 +8,21 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/repository"
 )
 
+// VaultServiceInterface defines the interface for vault operations.
 type VaultServiceInterface interface {
 	Open(ctx context.Context, env string) (*model.Vault, error)
 	Save(ctx context.Context, vault *model.Vault) error
 	Create(ctx context.Context, env string) (*model.Vault, error)
 }
 
+// VaultService implements vault operations including create, open, and save.
 type VaultService struct {
 	vaultRepo         repository.VaultRepository
 	passphraseService PassphraseService
 	hashService       HashService
 }
 
+// NewVaultService creates a new VaultService instance.
 func NewVaultService(
 	vaultRepo repository.VaultRepository,
 	passphraseService PassphraseService,
@@ -28,6 +31,7 @@ func NewVaultService(
 	return &VaultService{vaultRepo, passphraseService, hashService}
 }
 
+// Create creates a new vault for the specified environment.
 func (vs *VaultService) Create(ctx context.Context, env string) (*model.Vault, error) {
 	exists, err := vs.vaultRepo.Exists(ctx, env)
 	if err != nil {
@@ -64,6 +68,7 @@ func (vs *VaultService) Create(ctx context.Context, env string) (*model.Vault, e
 	return vault, nil
 }
 
+// Open opens an existing vault for the specified environment.
 func (vs *VaultService) Open(ctx context.Context, env string) (*model.Vault, error) {
 	if exists, err := vs.vaultRepo.Exists(ctx, env); !exists || err != nil {
 		return nil, fmt.Errorf("vault for env %s does not exist %w", env, err)
@@ -91,6 +96,7 @@ func (vs *VaultService) Open(ctx context.Context, env string) (*model.Vault, err
 	return vault, nil
 }
 
+// Save saves the vault to persistent storage.
 func (vs *VaultService) Save(ctx context.Context, vault *model.Vault) error {
 	return vs.vaultRepo.Save(ctx, vault)
 }

@@ -26,6 +26,7 @@ Your secrets are protected with a passphrase that can be stored securely in your
 	},
 }
 
+// Execute runs the root command and handles errors.
 func Execute() error {
 	return rootCmd.Execute()
 }

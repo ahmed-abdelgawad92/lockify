@@ -7,6 +7,7 @@ import (
 	"testing"
 )
 
+// DeepEqual asserts that two values are deeply equal.
 func DeepEqual[T any](t *testing.T, want, got T, errMsg ...string) {
 	t.Helper()
 	if !reflect.DeepEqual(want, got) {
@@ -17,6 +18,7 @@ func DeepEqual[T any](t *testing.T, want, got T, errMsg ...string) {
 	}
 }
 
+// Equal asserts that two values are equal.
 func Equal[T comparable](t *testing.T, want, got T, errMsg ...string) {
 	t.Helper()
 	if want != got {
@@ -27,6 +29,7 @@ func Equal[T comparable](t *testing.T, want, got T, errMsg ...string) {
 	}
 }
 
+// NotEqual asserts that two values are not equal.
 func NotEqual[T comparable](t *testing.T, notWant, got T, errMsg ...string) {
 	t.Helper()
 	if notWant == got {
@@ -37,6 +40,7 @@ func NotEqual[T comparable](t *testing.T, notWant, got T, errMsg ...string) {
 	}
 }
 
+// Nil asserts that a value is nil.
 func Nil(t *testing.T, v any, errMsg ...string) {
 	t.Helper()
 	if !isNil(v) {
@@ -48,6 +52,7 @@ func Nil(t *testing.T, v any, errMsg ...string) {
 	}
 }
 
+// NotNil asserts that a value is not nil.
 func NotNil(t *testing.T, v any, errMsg ...string) {
 	t.Helper()
 	if isNil(v) {
@@ -58,6 +63,7 @@ func NotNil(t *testing.T, v any, errMsg ...string) {
 	}
 }
 
+// True asserts that a condition is true.
 func True(t *testing.T, cond bool, errMsg ...string) {
 	t.Helper()
 	if !cond {
@@ -68,6 +74,7 @@ func True(t *testing.T, cond bool, errMsg ...string) {
 	}
 }
 
+// False asserts that a condition is false.
 func False(t *testing.T, cond bool, errMsg ...string) {
 	t.Helper()
 	if cond {
@@ -92,6 +99,7 @@ func isNil(v any) bool {
 	return false
 }
 
+// Contains asserts that a collection contains a specific value.
 func Contains[T any, C comparable](t *testing.T, needle C, stash T, errMsg ...string) {
 	t.Helper()
 	containsValue, err := contains(needle, stash)
@@ -103,6 +111,7 @@ func Contains[T any, C comparable](t *testing.T, needle C, stash T, errMsg ...st
 	}
 }
 
+// NotContain asserts that a collection does not contain a specific value.
 func NotContain[T any, C comparable](t *testing.T, needle C, stash T, errMsg ...string) {
 	t.Helper()
 	conatinsValue, err := contains(needle, stash)
@@ -155,6 +164,7 @@ func contains[T any, C comparable](needle C, stash T) (bool, error) {
 	return false, fmt.Errorf("Contains failed: unsupported type %T", stash)
 }
 
+// Count asserts that a collection has the expected length.
 func Count[T any](t *testing.T, want int, got T, errMsg ...string) {
 	t.Helper()
 

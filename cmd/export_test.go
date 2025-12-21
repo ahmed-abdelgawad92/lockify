@@ -68,7 +68,7 @@ func TestExportCommand_Success_Json(t *testing.T) {
 	err := cmd.RunE(cmd, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "test", mockUseCase.receivedEnv)
-	assert.Equal(t, value.Json, mockUseCase.receivedFormat)
+	assert.Equal(t, value.JSON, mockUseCase.receivedFormat)
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 }
 

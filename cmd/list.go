@@ -9,11 +9,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ListCommand represents the list command for listing vault entries.
 type ListCommand struct {
 	useCase app.ListEntriesUc
 	logger  domain.Logger
 }
 
+// NewListCommand creates a new list command instance.
 func NewListCommand(useCase app.ListEntriesUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &ListCommand{useCase, logger}
 	// lockify list [env]

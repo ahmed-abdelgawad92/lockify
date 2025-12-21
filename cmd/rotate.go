@@ -10,12 +10,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// RotateCommand represents the rotate-key command for rotating vault passphrases.
 type RotateCommand struct {
 	useCase app.RotatePassphraseUc
 	prompt  service.PromptService
 	logger  domain.Logger
 }
 
+// NewRotateCommand creates a new rotate-key command instance.
 func NewRotateCommand(useCase app.RotatePassphraseUc, prompt service.PromptService, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &RotateCommand{useCase, prompt, logger}
 

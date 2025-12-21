@@ -10,12 +10,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// AddCommand represents the add command for adding entries to the vault.
 type AddCommand struct {
 	useCase app.AddEntryUc
 	prompt  service.PromptService
 	logger  domain.Logger
 }
 
+// NewAddCommand creates a new add command instance.
 func NewAddCommand(useCase app.AddEntryUc, prompt service.PromptService, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &AddCommand{useCase, prompt, logger}
 

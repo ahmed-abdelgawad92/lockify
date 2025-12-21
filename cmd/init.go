@@ -9,11 +9,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// InitCommand represents the init command for initializing a new vault.
 type InitCommand struct {
 	useCase app.InitUc
 	logger  domain.Logger
 }
 
+// NewInitCommand creates a new init command instance.
 func NewInitCommand(initUc app.InitUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &InitCommand{useCase: initUc, logger: logger}
 

@@ -9,11 +9,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GetCommand represents the get command for retrieving entries from the vault.
 type GetCommand struct {
 	useCase app.GetEntryUc
 	logger  domain.Logger
 }
 
+// NewGetCommand creates a new get command instance.
 func NewGetCommand(useCase app.GetEntryUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &GetCommand{useCase, logger}
 	// lockify get --env [env] --key [key]

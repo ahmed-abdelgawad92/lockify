@@ -9,6 +9,12 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/internal/config"
 )
 
+const (
+	testPassphrase = "test-passphrase"
+	testPlaintext  = "test-plaintext"
+	testSalt       = "test-salt"
+)
+
 // createTestEncryptionService creates a test encryption service with default config
 func createTestEncryptionService(t *testing.T) *AESEncryptionService {
 	t.Helper()
@@ -24,8 +30,8 @@ func createTestSalt(t *testing.T) string {
 func TestEncrypt_Success(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
-	plaintext := []byte("test plaintext")
+	passphrase := testPassphrase
+	plaintext := []byte(testPlaintext)
 
 	ciphertext, err := encryptionService.Encrypt(plaintext, encodedSalt, passphrase)
 	if err != nil {
@@ -46,8 +52,8 @@ func TestEncrypt_Success(t *testing.T) {
 func TestEncrypt_SamePlaintextProducesDifferentCiphertexts(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
-	plaintext := []byte("test plaintext")
+	passphrase := testPassphrase
+	plaintext := []byte(testPlaintext)
 
 	ciphertext1, err := encryptionService.Encrypt(plaintext, encodedSalt, passphrase)
 	if err != nil {
@@ -66,8 +72,8 @@ func TestEncrypt_SamePlaintextProducesDifferentCiphertexts(t *testing.T) {
 func TestEncryptDecrypt_RoundTrip(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
-	plaintext := []byte("test plaintext")
+	passphrase := testPassphrase
+	plaintext := []byte(testPlaintext)
 
 	ciphertext, err := encryptionService.Encrypt(plaintext, encodedSalt, passphrase)
 	if err != nil {
@@ -87,7 +93,7 @@ func TestEncryptDecrypt_RoundTrip(t *testing.T) {
 func TestEncryptDecrypt_EmptyPlaintext(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
+	passphrase := testPassphrase
 	plaintext := []byte("")
 
 	ciphertext, err := encryptionService.Encrypt(plaintext, encodedSalt, passphrase)
@@ -108,8 +114,8 @@ func TestEncryptDecrypt_EmptyPlaintext(t *testing.T) {
 func TestDecrypt_WrongPassphrase(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
-	plaintext := []byte("test plaintext")
+	passphrase := testPassphrase
+	plaintext := []byte(testPlaintext)
 
 	ciphertext, err := encryptionService.Encrypt(plaintext, encodedSalt, passphrase)
 	if err != nil {
@@ -129,8 +135,8 @@ func TestDecrypt_WrongPassphrase(t *testing.T) {
 func TestDecrypt_WrongSalt(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
-	plaintext := []byte("test plaintext")
+	passphrase := testPassphrase
+	plaintext := []byte(testPlaintext)
 
 	ciphertext, err := encryptionService.Encrypt(plaintext, encodedSalt, passphrase)
 	if err != nil {
@@ -150,7 +156,7 @@ func TestDecrypt_WrongSalt(t *testing.T) {
 func TestDecrypt_EmptyCiphertext(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
+	passphrase := testPassphrase
 
 	_, err := encryptionService.Decrypt("", encodedSalt, passphrase)
 	if err == nil {
@@ -164,7 +170,7 @@ func TestDecrypt_EmptyCiphertext(t *testing.T) {
 func TestDecrypt_InvalidCiphertext(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
+	passphrase := testPassphrase
 
 	_, err := encryptionService.Decrypt("invalid", encodedSalt, passphrase)
 	if err == nil {
@@ -178,7 +184,7 @@ func TestDecrypt_InvalidCiphertext(t *testing.T) {
 func TestEncrypt_NilPlaintext(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
+	passphrase := testPassphrase
 
 	_, err := encryptionService.Encrypt(nil, encodedSalt, passphrase)
 	if err == nil {
@@ -191,8 +197,8 @@ func TestEncrypt_NilPlaintext(t *testing.T) {
 
 func TestEncrypt_EmptySalt(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
-	passphrase := "test passphrase"
-	plaintext := []byte("test plaintext")
+	passphrase := testPassphrase
+	plaintext := []byte(testPlaintext)
 
 	_, err := encryptionService.Encrypt(plaintext, "", passphrase)
 	if err == nil {
@@ -206,7 +212,7 @@ func TestEncrypt_EmptySalt(t *testing.T) {
 func TestEncrypt_EmptyPassphrase(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	plaintext := []byte("test plaintext")
+	plaintext := []byte(testPlaintext)
 
 	_, err := encryptionService.Encrypt(plaintext, encodedSalt, "")
 	if err == nil {
@@ -220,7 +226,7 @@ func TestEncrypt_EmptyPassphrase(t *testing.T) {
 func TestDecrypt_CiphertextTooShort(t *testing.T) {
 	encryptionService := createTestEncryptionService(t)
 	encodedSalt := createTestSalt(t)
-	passphrase := "test passphrase"
+	passphrase := testPassphrase
 
 	shortCiphertext := base64.StdEncoding.EncodeToString([]byte("short"))
 

@@ -10,10 +10,12 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
+// ImportEnvUc defines the interface for importing entries into the vault.
 type ImportEnvUc interface {
 	Execute(ctx context.Context, env string, format value.FileFormat, r io.Reader, overwrite bool) (int, int, error)
 }
 
+// ImportEnvUseCase implements the use case for importing entries into the vault.
 type ImportEnvUseCase struct {
 	vaultService      service.VaultServiceInterface
 	importService     service.ImportService
@@ -21,6 +23,7 @@ type ImportEnvUseCase struct {
 	logger            domain.Logger
 }
 
+// NewImportEnvUseCase creates a new ImportEnvUseCase instance.
 func NewImportEnvUseCase(
 	vaultService service.VaultServiceInterface,
 	importService service.ImportService,
@@ -30,6 +33,7 @@ func NewImportEnvUseCase(
 	return &ImportEnvUseCase{vaultService, importService, encryptionService, logger}
 }
 
+// Execute imports entries from a reader into the vault.
 func (useCase *ImportEnvUseCase) Execute(ctx context.Context, env string, format value.FileFormat, r io.Reader, overwrite bool) (int, int, error) {
 	imported := 0
 	skipped := 0
@@ -40,8 +44,8 @@ func (useCase *ImportEnvUseCase) Execute(ctx context.Context, env string, format
 
 	var entries map[string]string
 	switch format {
-	case value.Json:
-		entries, err = useCase.importService.FromJson(r)
+	case value.JSON:
+		entries, err = useCase.importService.FromJSON(r)
 	case value.DotEnv:
 		entries, err = useCase.importService.FromDotEnv(r)
 	default:

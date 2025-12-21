@@ -78,7 +78,7 @@ func TestImportCommand_Success_WithOverwrite(t *testing.T) {
 	err := cmd.RunE(cmd, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "test", mockUseCase.receivedEnv)
-	assert.Equal(t, value.Json, mockUseCase.receivedFormat)
+	assert.Equal(t, value.JSON, mockUseCase.receivedFormat)
 	assert.True(t, mockUseCase.receivedOverwrite)
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 	assert.Count(t, 1, mockLogger.SuccessLogs)

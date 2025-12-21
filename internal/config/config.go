@@ -9,7 +9,7 @@ type EncryptionConfig struct {
 	NonceSize    int
 }
 
-// DefaultCryptoConfig returns cryptographic settings
+// DefaultEncryptionConfig returns default cryptographic settings.
 func DefaultEncryptionConfig() EncryptionConfig {
 	return EncryptionConfig{
 		ArgonTime:    3,

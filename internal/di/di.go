@@ -49,53 +49,65 @@ func getVaultService() service.VaultServiceInterface {
 }
 
 func getImportService() service.ImportService {
-	return fs.NewFsImportService()
+	return fs.NewImportService()
 }
 
+// GetLogger returns the logger instance.
 func GetLogger() domain.Logger {
 	return log
 }
 
+// BuildAddEntry creates and returns an AddEntry use case.
 func BuildAddEntry() app.AddEntryUc {
 	return app.NewAddEntryUseCase(getVaultService(), getEncryptionService())
 }
 
+// BuildPromptService creates and returns a prompt service instance.
 func BuildPromptService() service.PromptService {
-	return prompt.NewPromptService()
+	return prompt.NewService()
 }
 
+// BuildClearCachedPassphrase creates and returns a ClearCachedPassphrase use case.
 func BuildClearCachedPassphrase() app.ClearCachedPassphraseUc {
 	return app.NewClearCachedPassphraseUseCase(getPassphraseService())
 }
 
+// BuildClearEnvCachedPassphrase creates and returns a ClearEnvCachedPassphrase use case.
 func BuildClearEnvCachedPassphrase() app.ClearEnvCachedPassphraseUseCase {
 	return app.NewClearEnvCachedPassphraseUseCase(getPassphraseService())
 }
 
+// BuildDeleteEntry creates and returns a DeleteEntry use case.
 func BuildDeleteEntry() app.DeleteEntryUc {
 	return app.NewDeleteEntryUseCase(getVaultService())
 }
 
+// BuildExportEnv creates and returns an ExportEnv use case.
 func BuildExportEnv() app.ExportEnvUc {
 	return app.NewExportEnvUseCase(getVaultService(), getEncryptionService(), GetLogger())
 }
 
+// BuildGetEntry creates and returns a GetEntry use case.
 func BuildGetEntry() app.GetEntryUc {
 	return app.NewGetEntryUseCase(getVaultService(), getEncryptionService())
 }
 
+// BuildInitializeVault creates and returns an InitializeVault use case.
 func BuildInitializeVault() app.InitUc {
 	return app.NewInitializeVaultUseCase(getVaultService())
 }
 
+// BuildListEntries creates and returns a ListEntries use case.
 func BuildListEntries() app.ListEntriesUc {
 	return app.NewListEntriesUseCase(getVaultService())
 }
 
+// BuildRotatePassphrase creates and returns a RotatePassphrase use case.
 func BuildRotatePassphrase() app.RotatePassphraseUc {
 	return app.NewRotatePassphraseUseCase(getVaultRepository(), getEncryptionService(), getHashService())
 }
 
+// BuildImportEnv creates and returns an ImportEnv use case.
 func BuildImportEnv() app.ImportEnvUc {
 	return app.NewImportEnvUseCase(getVaultService(), getImportService(), getEncryptionService(), GetLogger())
 }

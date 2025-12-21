@@ -10,11 +10,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ExportCommand represents the export command for exporting vault entries.
 type ExportCommand struct {
 	useCase app.ExportEnvUc
 	logger  domain.Logger
 }
 
+// NewExportCommand creates a new export command instance.
 func NewExportCommand(useCase app.ExportEnvUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &ExportCommand{useCase, logger}
 	// lockify export --env [env] --format [dotenv|json]

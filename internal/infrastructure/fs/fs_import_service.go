@@ -10,14 +10,17 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
-type FsImportService struct {
+// ImportService implements ImportService for filesystem-based imports.
+type ImportService struct {
 }
 
-func NewFsImportService() service.ImportService {
-	return &FsImportService{}
+// NewImportService creates a new ImportService instance.
+func NewImportService() service.ImportService {
+	return &ImportService{}
 }
 
-func (service *FsImportService) FromJson(r io.Reader) (map[string]string, error) {
+// FromJSON parses JSON data from a reader and returns a map of key-value pairs.
+func (service *ImportService) FromJSON(r io.Reader) (map[string]string, error) {
 	var entries map[string]string
 	decoder := json.NewDecoder(r)
 	if err := decoder.Decode(&entries); err != nil {
@@ -32,7 +35,8 @@ func (service *FsImportService) FromJson(r io.Reader) (map[string]string, error)
 	return result, nil
 }
 
-func (service *FsImportService) FromDotEnv(r io.Reader) (map[string]string, error) {
+// FromDotEnv parses dotenv data from a reader and returns a map of key-value pairs.
+func (service *ImportService) FromDotEnv(r io.Reader) (map[string]string, error) {
 	entries := make(map[string]string)
 	scanner := bufio.NewScanner(r)
 

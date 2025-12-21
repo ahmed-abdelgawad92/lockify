@@ -8,16 +8,19 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
+// RotatePassphraseUc defines the interface for rotating vault passphrases.
 type RotatePassphraseUc interface {
 	Execute(ctx context.Context, env, currentPassphrase, newPassphrase string) error
 }
 
+// RotatePassphraseUseCase implements the use case for rotating vault passphrases.
 type RotatePassphraseUseCase struct {
 	vaultRepo         repository.VaultRepository
 	encryptionService service.EncryptionService
 	hashService       service.HashService
 }
 
+// NewRotatePassphraseUseCase creates a new RotatePassphraseUseCase instance.
 func NewRotatePassphraseUseCase(
 	vaultRepo repository.VaultRepository,
 	encryptionService service.EncryptionService,
@@ -26,6 +29,7 @@ func NewRotatePassphraseUseCase(
 	return &RotatePassphraseUseCase{vaultRepo, encryptionService, hashService}
 }
 
+// Execute rotates the passphrase for a vault by re-encrypting all entries with the new passphrase.
 func (useCase *RotatePassphraseUseCase) Execute(ctx context.Context, env, currentPassphrase, newPassphrase string) error {
 	vault, err := useCase.vaultRepo.Load(ctx, env)
 	if err != nil {

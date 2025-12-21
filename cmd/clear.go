@@ -7,11 +7,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ClearCommand represents the clear command for clearing cached passphrases.
 type ClearCommand struct {
 	buildClearCachedPassphraseUc func() app.ClearCachedPassphraseUc
 	logger                       domain.Logger
 }
 
+// NewClearCommand creates a new clear command instance.
 func NewClearCommand(buildClearCachedPassphraseUc func() app.ClearCachedPassphraseUc, logger domain.Logger) *cobra.Command {
 	cmd := &ClearCommand{buildClearCachedPassphraseUc, logger}
 

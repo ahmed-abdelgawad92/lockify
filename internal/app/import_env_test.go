@@ -32,7 +32,7 @@ func TestImportEnvUseCase_Execute_Json(t *testing.T) {
 	}
 
 	importService := &test.MockImportService{
-		FromJsonFunc: func(r io.Reader) (map[string]string, error) {
+		FromJSONFunc: func(r io.Reader) (map[string]string, error) {
 			return entries, nil
 		},
 	}
@@ -50,7 +50,7 @@ func TestImportEnvUseCase_Execute_Json(t *testing.T) {
 	jsonInput := `{"test-key": "test-value"}`
 	reader := strings.NewReader(jsonInput)
 
-	imported, skipped, err := useCase.Execute(context.Background(), envTest, value.Json, reader, false)
+	imported, skipped, err := useCase.Execute(context.Background(), envTest, value.JSON, reader, false)
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

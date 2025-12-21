@@ -7,13 +7,16 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/service"
 )
 
-type PromptService struct{}
+// Service implements PromptService for user input prompts.
+type Service struct{}
 
-func NewPromptService() service.PromptService {
-	return &PromptService{}
+// NewService creates a new Service instance.
+func NewService() service.PromptService {
+	return &Service{}
 }
 
-func (p *PromptService) GetUserInputForKeyAndValue(isSecret bool) (key, value string, err error) {
+// GetUserInputForKeyAndValue prompts the user for a key and value, optionally hiding the value input.
+func (p *Service) GetUserInputForKeyAndValue(isSecret bool) (key, value string, err error) {
 	prompt := &survey.Input{Message: "Enter key:"}
 	err = survey.AskOne(prompt, &key)
 	if err != nil {
@@ -37,7 +40,8 @@ func (p *PromptService) GetUserInputForKeyAndValue(isSecret bool) (key, value st
 	return key, value, nil
 }
 
-func (p *PromptService) GetPassphraseInput(message string) (string, error) {
+// GetPassphraseInput prompts the user for a passphrase with the given message.
+func (p *Service) GetPassphraseInput(message string) (string, error) {
 	var passphrase string
 	prompt := &survey.Password{Message: message}
 	err := survey.AskOne(prompt, &passphrase)

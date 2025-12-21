@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Vault represents an encrypted vault containing entries for an environment.
 type Vault struct {
 	Meta       Meta             `json:"meta"`
 	Entries    map[string]Entry `json:"entries"`
