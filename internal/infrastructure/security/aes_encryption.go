@@ -119,6 +119,10 @@ func (e *AESEncryptionService) Decrypt(ciphertext, encodedSalt, passphrase strin
 
 	clearBytes(nonce, ciphertextBytes)
 
+	if plaintext == nil {
+		return []byte{}, nil
+	}
+
 	return plaintext, nil
 }
 

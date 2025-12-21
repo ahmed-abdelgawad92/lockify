@@ -79,6 +79,14 @@ func (c *ImportCommand) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	if file != os.Stdin {
+		defer func() {
+			if closeErr := file.Close(); closeErr != nil {
+				c.logger.Error("failed to close file: %v", closeErr)
+			}
+		}()
+	}
+
 	c.logger.Progress("Importing variables from %s...", filename)
 	ctx := getContext()
 	imported, skipped, err := c.useCase.Execute(ctx, env, fileFormat, file, overwrite)
@@ -105,13 +113,11 @@ func getFile(args []string) (*os.File, string, error) {
 
 	if len(args) > 0 {
 		filename = args[0]
-		file, err := os.Open(filename)
+		var err error
+		file, err = os.Open(filename)
 		if err != nil {
 			return nil, "", fmt.Errorf("failed to open file %q: %w", filename, err)
 		}
-
-		//nolint:errcheck // We don't want to return an error here
-		defer file.Close()
 	} else {
 		file = os.Stdin
 		filename = "stdin"
