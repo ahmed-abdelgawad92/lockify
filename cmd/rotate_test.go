@@ -31,15 +31,15 @@ func TestRotateCommand_Success(t *testing.T) {
 	mockUseCase := &mockRotateUseCase{}
 	mockLogger := &test.MockLogger{}
 	mockPrompt := &test.MockPromptService{
-		GetPassphraseInputFunc: func(message string) string {
+		GetPassphraseInputFunc: func(message string) (string, error) {
 			if message == "Enter current passphrase:" {
-				return "current_pass"
+				return "current_pass", nil
 			}
-			return "new_pass"
+			return "new_pass", nil
 		},
 	}
 
-	cmd := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
+	cmd, _ := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -62,7 +62,7 @@ func TestRotateCommand_Error_Required_Env(t *testing.T) {
 	mockLogger := &test.MockLogger{}
 	mockPrompt := &test.MockPromptService{}
 
-	cmd := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
+	cmd, _ := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
 
 	var buf bytes.Buffer
 	cmd.SetOut(&buf)
@@ -70,8 +70,7 @@ func TestRotateCommand_Error_Required_Env(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	wants := "env flag is required (use --env or -e)"
-	assert.Contains(t, wants, err.Error())
+	assert.Contains(t, errMsgEmptyEnv, err.Error())
 }
 
 func TestRotateCommand_Error_Empty_Env(t *testing.T) {
@@ -79,7 +78,7 @@ func TestRotateCommand_Error_Empty_Env(t *testing.T) {
 	mockLogger := &test.MockLogger{}
 	mockPrompt := &test.MockPromptService{}
 
-	cmd := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
+	cmd, _ := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
 	if err := cmd.Flags().Set("env", ""); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -90,28 +89,26 @@ func TestRotateCommand_Error_Empty_Env(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	wants := "env flag is required (use --env or -e)"
-	assert.Contains(t, wants, err.Error())
+	assert.Contains(t, errMsgEmptyEnv, err.Error())
 }
 
 func TestRotateCommand_UseCaseError(t *testing.T) {
-	errMsg := "execute failed"
 	mockUseCase := &mockRotateUseCase{
 		executeFunc: func(ctx context.Context, env, currentPassphrase, newPassphrase string) error {
-			return fmt.Errorf("%s", errMsg)
+			return fmt.Errorf("%s", errMsgExecuteFailed)
 		},
 	}
 	mockLogger := &test.MockLogger{}
 	mockPrompt := &test.MockPromptService{
-		GetPassphraseInputFunc: func(message string) string {
+		GetPassphraseInputFunc: func(message string) (string, error) {
 			if message == "Enter current passphrase:" {
-				return "current_pass"
+				return "current_pass", nil
 			}
-			return "new_pass"
+			return "new_pass", nil
 		},
 	}
 
-	cmd := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
+	cmd, _ := NewRotateCommand(mockUseCase, mockPrompt, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -122,7 +119,7 @@ func TestRotateCommand_UseCaseError(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	assert.Contains(t, errMsg, err.Error())
+	assert.Contains(t, errMsgExecuteFailed, err.Error())
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 	assert.Count(t, 0, mockLogger.SuccessLogs)
 }

@@ -11,7 +11,6 @@ import (
 )
 
 func TestClearEnvCachedPassphraseUseCase_Execute_Success(t *testing.T) {
-	env := "test"
 	clearCalled := false
 	var clearedEnv string
 
@@ -24,11 +23,11 @@ func TestClearEnvCachedPassphraseUseCase_Execute_Success(t *testing.T) {
 	}
 
 	useCase := NewClearEnvCachedPassphraseUseCase(passphraseService)
-	err := useCase.Execute(context.Background(), env)
+	err := useCase.Execute(context.Background(), envTest)
 
 	assert.Nil(t, err, fmt.Sprintf("Execute() returned unexpected error: %v", err))
 	assert.True(t, clearCalled, "Execute() should call Clear(), but it didn't")
-	assert.Equal(t, clearedEnv, env, fmt.Sprintf("Execute() called Clear() with env %q, want %q", clearedEnv, env))
+	assert.Equal(t, clearedEnv, envTest, fmt.Sprintf("Execute() called Clear() with env %q, want %q", clearedEnv, envTest))
 }
 
 func TestClearEnvCachedPassphraseUseCase_Execute_Error(t *testing.T) {
@@ -40,7 +39,7 @@ func TestClearEnvCachedPassphraseUseCase_Execute_Error(t *testing.T) {
 
 	useCase := NewClearEnvCachedPassphraseUseCase(passphraseService)
 
-	err := useCase.Execute(context.Background(), "test")
+	err := useCase.Execute(context.Background(), envTest)
 	assert.NotNil(t, err, "Execute() with Clear error expected error, got nil")
 	assert.Equal(t, err.Error(), "clear error", fmt.Sprintf("Execute() error = %q, want %q", err.Error(), "clear error"))
 }

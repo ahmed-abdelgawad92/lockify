@@ -76,7 +76,10 @@ func (useCase *ImportEnvUseCase) Execute(ctx context.Context, env string, format
 	}
 
 	if imported > 0 {
-		useCase.vaultService.Save(ctx, vault)
+		err = useCase.vaultService.Save(ctx, vault)
+		if err != nil {
+			return imported, skipped, fmt.Errorf("failed to save vault: %w", err)
+		}
 	}
 
 	return imported, skipped, nil

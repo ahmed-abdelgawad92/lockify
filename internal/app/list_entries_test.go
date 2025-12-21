@@ -12,26 +12,22 @@ import (
 )
 
 func TestListEntriesUseCase_Execute_Success(t *testing.T) {
-	env := "test"
 	key1 := "test-key-1"
 	key2 := "test-key-2"
-	value := "test-value"
-	salt := "test-salt"
-	passphrase := "test-passphrase"
 
 	vaultService := &test.MockVaultService{
 		OpenFunc: func(ctx context.Context, env string) (*model.Vault, error) {
-			savedVault, _ := model.NewVault(env, "test-fingerprint", salt)
-			savedVault.SetPassphrase(passphrase)
-			savedVault.SetEntry(key1, base64.StdEncoding.EncodeToString([]byte(value)))
-			savedVault.SetEntry(key2, base64.StdEncoding.EncodeToString([]byte(value)))
+			savedVault, _ := model.NewVault(envTest, fingerprintTest, saltTest)
+			savedVault.SetPassphrase(passphraseTest)
+			savedVault.SetEntry(key1, base64.StdEncoding.EncodeToString([]byte(valueTest)))
+			savedVault.SetEntry(key2, base64.StdEncoding.EncodeToString([]byte(valueTest)))
 			return savedVault, nil
 		},
 	}
 
 	useCase := NewListEntriesUseCase(vaultService)
 
-	allKeys, err := useCase.Execute(context.Background(), env)
+	allKeys, err := useCase.Execute(context.Background(), envTest)
 	assert.Nil(t, err, fmt.Sprintf("Execute() returned unexpected error: %v", err))
 	assert.Count(t, 2, allKeys, fmt.Sprintf("length of keys error, want: 2, got: %v", len(allKeys)))
 	assert.Contains(t, key1, allKeys, fmt.Sprintf("keys should contain %v", key1))

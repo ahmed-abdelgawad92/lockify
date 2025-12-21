@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ahmed-abdelgawad92/lockify/internal/app"
 	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
@@ -12,7 +14,7 @@ type InitCommand struct {
 	logger  domain.Logger
 }
 
-func NewInitCommand(initUc app.InitUc, logger domain.Logger) *cobra.Command {
+func NewInitCommand(initUc app.InitUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &InitCommand{useCase: initUc, logger: logger}
 
 	// lockify init --env [env]
@@ -30,9 +32,12 @@ func NewInitCommand(initUc app.InitUc, logger domain.Logger) *cobra.Command {
 	}
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
-	cobraCmd.MarkFlagRequired("env")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *InitCommand) runE(cmd *cobra.Command, args []string) error {
@@ -53,6 +58,9 @@ func (c *InitCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	initCmd := NewInitCommand(di.BuildInitializeVault(), di.GetLogger())
+	initCmd, err := NewInitCommand(di.BuildInitializeVault(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(initCmd)
 }

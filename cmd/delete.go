@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ahmed-abdelgawad92/lockify/internal/app"
 	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
@@ -12,7 +14,7 @@ type DeleteCommand struct {
 	logger  domain.Logger
 }
 
-func NewDeleteCommand(useCase app.DeleteEntryUc, logger domain.Logger) *cobra.Command {
+func NewDeleteCommand(useCase app.DeleteEntryUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &DeleteCommand{useCase, logger}
 	// lockify del --env [env] --key [key]
 	cobraCmd := &cobra.Command{
@@ -29,10 +31,16 @@ This command removes a key-value pair from the vault for the specified environme
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
 	cobraCmd.Flags().StringP("key", "k", "", "key to delete from the vault")
-	cobraCmd.MarkFlagRequired("env")
-	cobraCmd.MarkFlagRequired("key")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
+	err = cobraCmd.MarkFlagRequired("key")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark key flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *DeleteCommand) runE(cmd *cobra.Command, args []string) error {
@@ -58,6 +66,9 @@ func (c *DeleteCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	delCmd := NewDeleteCommand(di.BuildDeleteEntry(), di.GetLogger())
+	delCmd, err := NewDeleteCommand(di.BuildDeleteEntry(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(delCmd)
 }

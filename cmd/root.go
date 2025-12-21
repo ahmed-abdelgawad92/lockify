@@ -2,10 +2,15 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+)
+
+const (
+	errMsgEmptyEnv = "env flag is required (use --env or -e)"
 )
 
 var rootCmd = &cobra.Command{
@@ -32,7 +37,7 @@ func requireEnvFlag(cmd *cobra.Command) (string, error) {
 		return "", fmt.Errorf("failed to retrieve env flag: %w", err)
 	}
 	if env == "" {
-		return "", fmt.Errorf("env flag is required (use --env or -e)")
+		return "", errors.New(errMsgEmptyEnv)
 	}
 	return env, nil
 }

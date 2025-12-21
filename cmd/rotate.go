@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ahmed-abdelgawad92/lockify/internal/app"
 	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
@@ -14,7 +16,7 @@ type RotateCommand struct {
 	logger  domain.Logger
 }
 
-func NewRotateCommand(useCase app.RotatePassphraseUc, prompt service.PromptService, logger domain.Logger) *cobra.Command {
+func NewRotateCommand(useCase app.RotatePassphraseUc, prompt service.PromptService, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &RotateCommand{useCase, prompt, logger}
 
 	// lockify rotate-key --env [env]
@@ -31,9 +33,12 @@ with a new passphrase. You will be prompted for the current passphrase and a new
 	}
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
-	cobraCmd.MarkFlagRequired("env")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
@@ -42,18 +47,28 @@ func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	passphrase := c.prompt.GetPassphraseInput("Enter current passphrase:")
-	newPassphrase := c.prompt.GetPassphraseInput("Enter new passphrase:")
+	passphrase, err := c.prompt.GetPassphraseInput("Enter current passphrase:")
+	if err != nil {
+		return err
+	}
+	newPassphrase, err := c.prompt.GetPassphraseInput("Enter new passphrase:")
+	if err != nil {
+		return err
+	}
 
 	c.logger.Progress("Rotating passphrase for %s...\n", env)
 	ctx := getContext()
 	err = c.useCase.Execute(ctx, env, passphrase, newPassphrase)
 	if err != nil {
+		c.logger.Error("failed to rotate passphrase: %w", err)
 		return err
 	}
 
 	clearCacheUseCase := di.BuildClearEnvCachedPassphrase()
-	clearCacheUseCase.Execute(ctx, env)
+	err = clearCacheUseCase.Execute(ctx, env)
+	if err != nil {
+		c.logger.Error("failed to clear cached passphrase: %w", err)
+	}
 
 	c.logger.Success("Passphrase rotated successfully")
 
@@ -61,6 +76,9 @@ func (c *RotateCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	rotateCmd := NewRotateCommand(di.BuildRotatePassphrase(), di.BuildPromptService(), di.GetLogger())
+	rotateCmd, err := NewRotateCommand(di.BuildRotatePassphrase(), di.BuildPromptService(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(rotateCmd)
 }

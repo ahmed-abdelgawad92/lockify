@@ -10,24 +10,23 @@ import (
 
 // MockPromptService mocks the PromptService for testing.
 type MockPromptService struct {
-	GetUserInputFunc       func(isSecret bool) (key, value string)
-	GetPassphraseInputFunc func(message string) string
+	GetUserInputFunc       func(isSecret bool) (key, value string, err error)
+	GetPassphraseInputFunc func(message string) (string, error)
 }
 
-func (m *MockPromptService) GetUserInputForKeyAndValue(isSecret bool) (key, value string) {
+func (m *MockPromptService) GetUserInputForKeyAndValue(isSecret bool) (key, value string, err error) {
 	if m.GetUserInputFunc != nil {
 		return m.GetUserInputFunc(isSecret)
 	}
 
-	return "test_key", "test_value"
+	return "test_key", "test_value", nil
 }
 
-func (m *MockPromptService) GetPassphraseInput(message string) string {
+func (m *MockPromptService) GetPassphraseInput(message string) (string, error) {
 	if m.GetPassphraseInputFunc != nil {
 		return m.GetPassphraseInputFunc(message)
 	}
-
-	return "test_passphrase"
+	return "test_passphrase", nil
 }
 
 // MockVaultService mocks the VaultService for testing.

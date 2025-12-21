@@ -16,7 +16,7 @@ type ImportCommand struct {
 	logger  domain.Logger
 }
 
-func NewImportCommand(useCase app.ImportEnvUc, logger domain.Logger) *cobra.Command {
+func NewImportCommand(useCase app.ImportEnvUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &ImportCommand{useCase, logger}
 
 	// lockify import .env --env prod --format dotenv
@@ -40,11 +40,16 @@ If no file is specified, the command reads from stdin.`,
 	cobraCmd.Flags().String("format", "dotenv", "Input format (dotenv|json)")
 	cobraCmd.Flags().Bool("overwrite", false, "Overwrite existing keys")
 
-	cobraCmd.MarkFlagFilename("file")
-	cobraCmd.MarkFlagRequired("env")
-	cobraCmd.MarkFlagRequired("format")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
+	err = cobraCmd.MarkFlagRequired("format")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark format flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *ImportCommand) runE(cmd *cobra.Command, args []string) error {
@@ -53,7 +58,10 @@ func (c *ImportCommand) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	overwrite, _ := cmd.Flags().GetBool("overwrite")
+	overwrite, err := cmd.Flags().GetBool("overwrite")
+	if err != nil {
+		c.logger.Error("failed to get overwrite flag: %w", err)
+	}
 	format, err := requireStringFlag(cmd, "format")
 	if err != nil {
 		return fmt.Errorf("failed to retrieve format flag: %w", err)
@@ -82,7 +90,10 @@ func (c *ImportCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	importCmd := NewImportCommand(di.BuildImportEnv(), di.GetLogger())
+	importCmd, err := NewImportCommand(di.BuildImportEnv(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(importCmd)
 }
 
@@ -96,6 +107,8 @@ func getFile(args []string) (*os.File, string, error) {
 		if err != nil {
 			return nil, "", fmt.Errorf("failed to open file %q: %w", filename, err)
 		}
+
+		//nolint:errcheck // We don't want to return an error here
 		defer file.Close()
 	} else {
 		file = os.Stdin

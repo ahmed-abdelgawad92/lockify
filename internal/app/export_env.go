@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain/model/value"
@@ -35,17 +36,26 @@ func (useCase *ExportEnvUseCase) Execute(ctx context.Context, env string, export
 
 	if exportFormat.IsDotEnv() {
 		for k, v := range vault.Entries {
-			decryptedVal, _ := useCase.encryptionService.Decrypt(v.Value, vault.Meta.Salt, vault.Passphrase())
+			decryptedVal, err := useCase.encryptionService.Decrypt(v.Value, vault.Meta.Salt, vault.Passphrase())
+			if err != nil {
+				return fmt.Errorf("failed to decrypt value: %v", err)
+			}
 			useCase.logger.Output("%s=%s\n", k, decryptedVal)
 		}
 	} else {
 		mappedEntries := make(map[string]string)
 		for k, v := range vault.Entries {
-			decryptedVal, _ := useCase.encryptionService.Decrypt(v.Value, vault.Meta.Salt, vault.Passphrase())
+			decryptedVal, err := useCase.encryptionService.Decrypt(v.Value, vault.Meta.Salt, vault.Passphrase())
+			if err != nil {
+				return fmt.Errorf("failed to decrypt value: %v", err)
+			}
 			mappedEntries[k] = string(decryptedVal)
 		}
 
-		data, _ := json.MarshalIndent(mappedEntries, "", "  ")
+		data, err := json.MarshalIndent(mappedEntries, "", "  ")
+		if err != nil {
+			return fmt.Errorf("failed to marshal entries: %v", err)
+		}
 		useCase.logger.Output(string(data))
 	}
 

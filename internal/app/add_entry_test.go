@@ -11,23 +11,26 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/test/assert"
 )
 
-func TestAddEntryUseCase_Execute_Success(t *testing.T) {
-	env := "test"
-	key := "test-key"
-	value := "test-value"
-	encryptedValue := "encrypted-test-value"
-	salt := "test-salt"
-	passphrase := "test-passphrase"
+const (
+	envTest            = "test"
+	keyTest            = "test-key"
+	valueTest          = "test-value"
+	fingerprintTest    = "test-fingerprint"
+	saltTest           = "test-salt"
+	passphraseTest     = "test-passphrase"
+	encryptedValueTest = "encrypted-test-value"
+)
 
-	testVault, _ := model.NewVault(env, "test-fingerprint", salt)
-	testVault.SetPassphrase(passphrase)
+func TestAddEntryUseCase_Execute_Success(t *testing.T) {
+	testVault, _ := model.NewVault(envTest, fingerprintTest, saltTest)
+	testVault.SetPassphrase(passphraseTest)
 
 	var savedVault *model.Vault
 
 	vaultService := &test.MockVaultService{
 		OpenFunc: func(ctx context.Context, env string) (*model.Vault, error) {
-			vault, _ := model.NewVault(env, "test-fingerprint", salt)
-			vault.SetPassphrase(passphrase)
+			vault, _ := model.NewVault(env, fingerprintTest, saltTest)
+			vault.SetPassphrase(passphraseTest)
 			return vault, nil
 		},
 		SaveFunc: func(ctx context.Context, vault *model.Vault) error {
@@ -38,33 +41,33 @@ func TestAddEntryUseCase_Execute_Success(t *testing.T) {
 
 	encryptionService := &test.MockEncryptionService{
 		EncryptFunc: func(plaintext []byte, encodedSalt, pwd string) (string, error) {
-			if string(plaintext) != value {
-				t.Errorf("Encrypt() called with plaintext %q, want %q", string(plaintext), value)
+			if string(plaintext) != valueTest {
+				t.Errorf("Encrypt() called with plaintext %q, want %q", string(plaintext), valueTest)
 			}
-			if encodedSalt != salt {
-				t.Errorf("Encrypt() called with salt %q, want %q", encodedSalt, salt)
+			if encodedSalt != saltTest {
+				t.Errorf("Encrypt() called with salt %q, want %q", encodedSalt, saltTest)
 			}
-			if pwd != passphrase {
-				t.Errorf("Encrypt() called with passphrase %q, want %q", pwd, passphrase)
+			if pwd != passphraseTest {
+				t.Errorf("Encrypt() called with passphrase %q, want %q", pwd, passphraseTest)
 			}
-			return encryptedValue, nil
+			return encryptedValueTest, nil
 		},
 	}
 
 	useCase := NewAddEntryUseCase(vaultService, encryptionService)
 
 	err := useCase.Execute(context.Background(), AddEntryDTO{
-		Env:   env,
-		Key:   key,
-		Value: value,
+		Env:   envTest,
+		Key:   keyTest,
+		Value: valueTest,
 	})
 
 	assert.Nil(t, err, fmt.Sprintf("Execute() returned unexpected error: %v", err))
 	assert.NotNil(t, savedVault, "Execute() should call Save() with the vault, but Save() was not called")
 
-	entry, err := savedVault.GetEntry(key)
-	assert.Nil(t, err, fmt.Sprintf("Execute() should add entry with key %q, but GetEntry() failed: %v", key, err))
-	assert.Equal(t, entry.Value, encryptedValue, fmt.Sprintf("Execute() added entry with value %q, want %q", entry.Value, encryptedValue))
+	entry, err := savedVault.GetEntry(keyTest)
+	assert.Nil(t, err, fmt.Sprintf("Execute() should add entry with key %q, but GetEntry() failed: %v", keyTest, err))
+	assert.Equal(t, entry.Value, encryptedValueTest, fmt.Sprintf("Execute() added entry with value %q, want %q", entry.Value, encryptedValueTest))
 }
 
 func TestAddEntryUseCase_Execute_VaultOpenError(t *testing.T) {
@@ -76,9 +79,9 @@ func TestAddEntryUseCase_Execute_VaultOpenError(t *testing.T) {
 
 	useCase := NewAddEntryUseCase(vaultService, &test.MockEncryptionService{})
 	err := useCase.Execute(context.Background(), AddEntryDTO{
-		Env:   "test",
-		Key:   "test-key",
-		Value: "test-value",
+		Env:   envTest,
+		Key:   keyTest,
+		Value: valueTest,
 	})
 
 	assert.NotNil(t, err, "Execute() should return vault open error, got nil")
@@ -93,9 +96,9 @@ func TestAddEntryUseCase_Execute_EncryptionError(t *testing.T) {
 	}
 	useCase := NewAddEntryUseCase(&test.MockVaultService{}, encryptionService)
 	err := useCase.Execute(context.Background(), AddEntryDTO{
-		Env:   "test",
-		Key:   "test-key",
-		Value: "test-value",
+		Env:   envTest,
+		Key:   keyTest,
+		Value: valueTest,
 	})
 
 	assert.NotNil(t, err, "Execute() should return encryption error, got nil")
@@ -110,9 +113,9 @@ func TestAddEntryUseCase_Execute_SaveError(t *testing.T) {
 	}, &test.MockEncryptionService{})
 
 	err := useCase.Execute(context.Background(), AddEntryDTO{
-		Env:   "test",
-		Key:   "test-key",
-		Value: "test-value",
+		Env:   envTest,
+		Key:   keyTest,
+		Value: valueTest,
 	})
 
 	assert.NotNil(t, err, "Execute() should return save error, got nil")

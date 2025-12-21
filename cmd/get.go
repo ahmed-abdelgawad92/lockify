@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ahmed-abdelgawad92/lockify/internal/app"
 	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
@@ -12,7 +14,7 @@ type GetCommand struct {
 	logger  domain.Logger
 }
 
-func NewGetCommand(useCase app.GetEntryUc, logger domain.Logger) *cobra.Command {
+func NewGetCommand(useCase app.GetEntryUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &GetCommand{useCase, logger}
 	// lockify get --env [env] --key [key]
 	cobraCmd := &cobra.Command{
@@ -29,9 +31,16 @@ The decrypted value is printed to stdout, making it suitable for shell scripting
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment name")
 	cobraCmd.Flags().StringP("key", "k", "", "The key to use for getting the entry")
-	cobraCmd.MarkFlagRequired("env")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
+	err = cobraCmd.MarkFlagRequired("key")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark key flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *GetCommand) runE(cmd *cobra.Command, args []string) error {
@@ -60,6 +69,9 @@ func (c *GetCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	getCmd := NewGetCommand(di.BuildGetEntry(), di.GetLogger())
+	getCmd, err := NewGetCommand(di.BuildGetEntry(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(getCmd)
 }

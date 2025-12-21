@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ahmed-abdelgawad92/lockify/internal/app"
 	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
@@ -14,7 +16,7 @@ type AddCommand struct {
 	logger  domain.Logger
 }
 
-func NewAddCommand(useCase app.AddEntryUc, prompt service.PromptService, logger domain.Logger) *cobra.Command {
+func NewAddCommand(useCase app.AddEntryUc, prompt service.PromptService, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &AddCommand{useCase, prompt, logger}
 
 	// lockify add --env [env]
@@ -32,9 +34,12 @@ func NewAddCommand(useCase app.AddEntryUc, prompt service.PromptService, logger 
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
 	cobraCmd.Flags().BoolP("secret", "s", false, "States that value to set is a secret and should be hidden in the terminal")
-	cobraCmd.MarkFlagRequired("env")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *AddCommand) runE(cmd *cobra.Command, args []string) error {
@@ -44,8 +49,16 @@ func (c *AddCommand) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	isSecret, _ := cmd.Flags().GetBool("secret")
-	key, value := c.prompt.GetUserInputForKeyAndValue(isSecret)
+	isSecret, err := cmd.Flags().GetBool("secret")
+	if err != nil {
+		c.logger.Error("failed to get secret flag: %w", err)
+		return err
+	}
+	key, value, err := c.prompt.GetUserInputForKeyAndValue(isSecret)
+	if err != nil {
+		c.logger.Error("failed to get user input for key and value: %w", err)
+		return err
+	}
 
 	ctx := getContext()
 	dto := app.AddEntryDTO{Env: env, Key: key, Value: value}
@@ -62,6 +75,9 @@ func (c *AddCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	addCmd := NewAddCommand(di.BuildAddEntry(), di.BuildPromptService(), di.GetLogger())
+	addCmd, err := NewAddCommand(di.BuildAddEntry(), di.BuildPromptService(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(addCmd)
 }

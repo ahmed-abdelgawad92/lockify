@@ -27,7 +27,7 @@ func (m *mockGetUseCase) Execute(ctx context.Context, env, key string) (string, 
 func TestGetCommand_Success(t *testing.T) {
 	mockUseCase := &mockGetUseCase{}
 	mockLogger := &test.MockLogger{}
-	cmd := NewGetCommand(mockUseCase, mockLogger)
+	cmd, _ := NewGetCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -50,15 +50,14 @@ func TestGetCommand_Success(t *testing.T) {
 }
 
 func TestGetCommand_UseCaseError(t *testing.T) {
-	errMsg := "execute failed"
 	mockUseCase := &mockGetUseCase{
 		executeFunc: func(ctx context.Context, env, key string) (string, error) {
-			return "", fmt.Errorf("%s", errMsg)
+			return "", fmt.Errorf("%s", errMsgExecuteFailed)
 		},
 	}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewGetCommand(mockUseCase, mockLogger)
+	cmd, _ := NewGetCommand(mockUseCase, mockLogger)
 
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
@@ -73,7 +72,7 @@ func TestGetCommand_UseCaseError(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	assert.Contains(t, errMsg, err.Error())
+	assert.Contains(t, errMsgExecuteFailed, err.Error())
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 	assert.Count(t, 1, mockLogger.ErrorLogs)
 	assert.Count(t, 0, mockLogger.SuccessLogs)

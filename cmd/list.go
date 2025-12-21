@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/ahmed-abdelgawad92/lockify/internal/app"
 	"github.com/ahmed-abdelgawad92/lockify/internal/di"
 	"github.com/ahmed-abdelgawad92/lockify/internal/domain"
@@ -12,7 +14,7 @@ type ListCommand struct {
 	logger  domain.Logger
 }
 
-func NewListCommand(useCase app.ListEntriesUc, logger domain.Logger) *cobra.Command {
+func NewListCommand(useCase app.ListEntriesUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &ListCommand{useCase, logger}
 	// lockify list [env]
 	cobraCmd := &cobra.Command{
@@ -28,9 +30,12 @@ Only keys are displayed, not decrypted values, for security reasons.`,
 	}
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
-	cobraCmd.MarkFlagRequired("env")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *ListCommand) runE(cmd *cobra.Command, args []string) error {
@@ -60,6 +65,9 @@ func (c *ListCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	listCmd := NewListCommand(di.BuildListEntries(), di.GetLogger())
+	listCmd, err := NewListCommand(di.BuildListEntries(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(listCmd)
 }

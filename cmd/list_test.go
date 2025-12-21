@@ -27,7 +27,7 @@ func TestListCommand_Success(t *testing.T) {
 	mockUseCase := &mockListUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewListCommand(mockUseCase, mockLogger)
+	cmd, _ := NewListCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -55,7 +55,7 @@ func TestListCommand_EmptyKeys(t *testing.T) {
 	}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewListCommand(mockUseCase, mockLogger)
+	cmd, _ := NewListCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -73,15 +73,14 @@ func TestListCommand_EmptyKeys(t *testing.T) {
 }
 
 func TestListCommand_UseCaseError(t *testing.T) {
-	errMsg := "execute failed"
 	mockUseCase := &mockListUseCase{
 		executeFunc: func(ctx context.Context, env string) ([]string, error) {
-			return nil, fmt.Errorf("%s", errMsg)
+			return nil, fmt.Errorf("%s", errMsgExecuteFailed)
 		},
 	}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewListCommand(mockUseCase, mockLogger)
+	cmd, _ := NewListCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -92,7 +91,7 @@ func TestListCommand_UseCaseError(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	assert.Contains(t, errMsg, err.Error())
+	assert.Contains(t, errMsgExecuteFailed, err.Error())
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 	assert.Count(t, 0, mockLogger.SuccessLogs)
 }
@@ -101,7 +100,7 @@ func TestListCommand_Error_Required_Env(t *testing.T) {
 	mockUseCase := &mockListUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewListCommand(mockUseCase, mockLogger)
+	cmd, _ := NewListCommand(mockUseCase, mockLogger)
 
 	var buf bytes.Buffer
 	cmd.SetOut(&buf)
@@ -109,8 +108,7 @@ func TestListCommand_Error_Required_Env(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	wants := "env flag is required (use --env or -e)"
-	assert.Contains(t, wants, err.Error())
+	assert.Contains(t, errMsgEmptyEnv, err.Error())
 	// Progress is logged before flag validation
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 	assert.Count(t, 0, mockLogger.SuccessLogs)
@@ -120,7 +118,7 @@ func TestListCommand_Error_Empty_Env(t *testing.T) {
 	mockUseCase := &mockListUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewListCommand(mockUseCase, mockLogger)
+	cmd, _ := NewListCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", ""); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -131,9 +129,7 @@ func TestListCommand_Error_Empty_Env(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	wants := "env flag is required (use --env or -e)"
-	assert.Contains(t, wants, err.Error())
-	// Progress is logged before flag validation
+	assert.Contains(t, errMsgEmptyEnv, err.Error())
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 	assert.Count(t, 0, mockLogger.SuccessLogs)
 }

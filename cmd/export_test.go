@@ -30,7 +30,7 @@ func TestExportCommand_Success_DotEnv(t *testing.T) {
 	mockUseCase := &mockExportUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewExportCommand(mockUseCase, mockLogger)
+	cmd, _ := NewExportCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -53,7 +53,7 @@ func TestExportCommand_Success_Json(t *testing.T) {
 	mockUseCase := &mockExportUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewExportCommand(mockUseCase, mockLogger)
+	cmd, _ := NewExportCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -73,15 +73,14 @@ func TestExportCommand_Success_Json(t *testing.T) {
 }
 
 func TestExportCommand_UseCaseError(t *testing.T) {
-	errMsg := "execute failed"
 	mockUseCase := &mockExportUseCase{
 		executeFunc: func(ctx context.Context, env string, exportFormat value.FileFormat) error {
-			return fmt.Errorf("%s", errMsg)
+			return fmt.Errorf("%s", errMsgExecuteFailed)
 		},
 	}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewExportCommand(mockUseCase, mockLogger)
+	cmd, _ := NewExportCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -95,7 +94,7 @@ func TestExportCommand_UseCaseError(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	assert.Contains(t, errMsg, err.Error())
+	assert.Contains(t, errMsgExecuteFailed, err.Error())
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 }
 
@@ -103,7 +102,7 @@ func TestExportCommand_Error_Required_Env(t *testing.T) {
 	mockUseCase := &mockExportUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewExportCommand(mockUseCase, mockLogger)
+	cmd, _ := NewExportCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("format", "dotenv"); err != nil {
 		t.Fatalf("failed to set format flag: %v", err)
 	}
@@ -114,15 +113,14 @@ func TestExportCommand_Error_Required_Env(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	wants := "env flag is required (use --env or -e)"
-	assert.Contains(t, wants, err.Error())
+	assert.Contains(t, errMsgEmptyEnv, err.Error())
 }
 
 func TestExportCommand_Error_Empty_Env(t *testing.T) {
 	mockUseCase := &mockExportUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewExportCommand(mockUseCase, mockLogger)
+	cmd, _ := NewExportCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", ""); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
@@ -136,15 +134,14 @@ func TestExportCommand_Error_Empty_Env(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	wants := "env flag is required (use --env or -e)"
-	assert.Contains(t, wants, err.Error())
+	assert.Contains(t, errMsgEmptyEnv, err.Error())
 }
 
 func TestExportCommand_Error_Invalid_Format(t *testing.T) {
 	mockUseCase := &mockExportUseCase{}
 	mockLogger := &test.MockLogger{}
 
-	cmd := NewExportCommand(mockUseCase, mockLogger)
+	cmd, _ := NewExportCommand(mockUseCase, mockLogger)
 	if err := cmd.Flags().Set("env", "test"); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}

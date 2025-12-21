@@ -45,10 +45,9 @@ func TestClearCommand_Success(t *testing.T) {
 }
 
 func TestClearCommand_UseCaseError(t *testing.T) {
-	errMsg := "execute failed"
 	mockUseCase := &mockClearUseCase{
 		executeFunc: func(ctx context.Context) error {
-			return fmt.Errorf("%s", errMsg)
+			return fmt.Errorf("%s", errMsgExecuteFailed)
 		},
 	}
 	buildUseCase := func() app.ClearCachedPassphraseUc {
@@ -64,7 +63,7 @@ func TestClearCommand_UseCaseError(t *testing.T) {
 
 	err := cmd.RunE(cmd, nil)
 	assert.NotNil(t, err)
-	assert.Contains(t, errMsg, err.Error())
+	assert.Contains(t, errMsgExecuteFailed, err.Error())
 	assert.True(t, mockUseCase.executed)
 	assert.Count(t, 1, mockLogger.ProgressLogs)
 	assert.Count(t, 0, mockLogger.SuccessLogs)

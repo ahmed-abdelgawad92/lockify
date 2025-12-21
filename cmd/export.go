@@ -15,7 +15,7 @@ type ExportCommand struct {
 	logger  domain.Logger
 }
 
-func NewExportCommand(useCase app.ExportEnvUc, logger domain.Logger) *cobra.Command {
+func NewExportCommand(useCase app.ExportEnvUc, logger domain.Logger) (*cobra.Command, error) {
 	cmd := &ExportCommand{useCase, logger}
 	// lockify export --env [env] --format [dotenv|json]
 	// lockify export --env prod --format dotenv > .env
@@ -37,9 +37,12 @@ The output is written to stdout, making it suitable for shell redirection.`,
 
 	cobraCmd.Flags().StringP("env", "e", "", "Environment Name")
 	cobraCmd.Flags().String("format", "dotenv", "The format of the exported file [dotenv|json]")
-	cobraCmd.MarkFlagRequired("env")
+	err := cobraCmd.MarkFlagRequired("env")
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark env flag as required: %w", err)
+	}
 
-	return cobraCmd
+	return cobraCmd, nil
 }
 
 func (c *ExportCommand) runE(cmd *cobra.Command, args []string) error {
@@ -68,6 +71,9 @@ func (c *ExportCommand) runE(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	exportCmd := NewExportCommand(di.BuildExportEnv(), di.GetLogger())
+	exportCmd, err := NewExportCommand(di.BuildExportEnv(), di.GetLogger())
+	if err != nil {
+		panic(err)
+	}
 	rootCmd.AddCommand(exportCmd)
 }

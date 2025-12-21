@@ -11,6 +11,18 @@ import (
 	"github.com/ahmed-abdelgawad92/lockify/test"
 )
 
+const errMsgExecuteFailed = "execute failed"
+
+var addTestConstants = struct {
+	env   string
+	key   string
+	value string
+}{
+	env:   "test",
+	key:   "test_key",
+	value: "test_value",
+}
+
 type mockAddUseCase struct {
 	executeFunc func(ctx context.Context, dto app.AddEntryDTO) error
 	receivedDTO app.AddEntryDTO
@@ -29,13 +41,13 @@ func TestAddCommand_Success(t *testing.T) {
 	mockUseCase := &mockAddUseCase{}
 	mockLogger := &test.MockLogger{}
 	mockPrompt := &test.MockPromptService{
-		GetUserInputFunc: func(isSecret bool) (string, string) {
-			return "test_key", "test_value"
+		GetUserInputFunc: func(isSecret bool) (string, string, error) {
+			return addTestConstants.key, addTestConstants.value, nil
 		},
 	}
 
-	cmd := NewAddCommand(mockUseCase, mockPrompt, mockLogger)
-	if err := cmd.Flags().Set("env", "test"); err != nil {
+	cmd, _ := NewAddCommand(mockUseCase, mockPrompt, mockLogger)
+	if err := cmd.Flags().Set("env", addTestConstants.env); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
 
@@ -47,7 +59,7 @@ func TestAddCommand_Success(t *testing.T) {
 		t.Fatalf("RunE returned unexpected error: %v", err)
 	}
 
-	if mockUseCase.receivedDTO.Env != "test" || mockUseCase.receivedDTO.Key != "test_key" || mockUseCase.receivedDTO.Value != "test_value" {
+	if mockUseCase.receivedDTO.Env != addTestConstants.env || mockUseCase.receivedDTO.Key != addTestConstants.key || mockUseCase.receivedDTO.Value != addTestConstants.value {
 		t.Fatalf("unexpected DTO: %+v", mockUseCase.receivedDTO)
 	}
 	if len(mockLogger.ProgressLogs) == 0 {
@@ -59,22 +71,21 @@ func TestAddCommand_Success(t *testing.T) {
 }
 
 func TestAddCommand_UseCaseError(t *testing.T) {
-	errMsg := "execute failed"
 	mockUseCase := &mockAddUseCase{
 		executeFunc: func(ctx context.Context, dto app.AddEntryDTO) error {
-			return fmt.Errorf("%s", errMsg)
+			return fmt.Errorf("%s", errMsgExecuteFailed)
 		},
 	}
 	mockLogger := &test.MockLogger{}
 	mockPrompt := &test.MockPromptService{
-		GetUserInputFunc: func(isSecret bool) (string, string) {
-			return "test_key", "test_value"
+		GetUserInputFunc: func(isSecret bool) (string, string, error) {
+			return addTestConstants.key, addTestConstants.value, nil
 		},
 	}
 
-	cmd := NewAddCommand(mockUseCase, mockPrompt, mockLogger)
+	cmd, _ := NewAddCommand(mockUseCase, mockPrompt, mockLogger)
 
-	if err := cmd.Flags().Set("env", "test"); err != nil {
+	if err := cmd.Flags().Set("env", addTestConstants.env); err != nil {
 		t.Fatalf("failed to set env flag: %v", err)
 	}
 
@@ -86,8 +97,8 @@ func TestAddCommand_UseCaseError(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error but got nil")
 	}
-	if !strings.Contains(err.Error(), errMsg) {
-		t.Fatalf("expected error to contain %q, got %v", errMsg, err)
+	if !strings.Contains(err.Error(), errMsgExecuteFailed) {
+		t.Fatalf("expected error to contain %q, got %v", errMsgExecuteFailed, err)
 	}
 	if len(mockLogger.ProgressLogs) == 0 {
 		t.Error("expected Progress to be logged")

@@ -63,6 +63,11 @@ linters:
         - name: early-return
         - name: range-val-in-closure
         - name: unexported-return
+  exclusions:
+    rules:
+      - path: '.*(_test|mocks)\.go$'
+        linters:
+          - errcheck
 
 formatters:
   enable:

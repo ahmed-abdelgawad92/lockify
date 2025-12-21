@@ -12,57 +12,51 @@ import (
 )
 
 func TestExportEnvUseCase_Execute_Json(t *testing.T) {
-	env := "test"
-	key := "test-key"
-	value := "test-value"
 	vaultService := &test.MockVaultService{
 		OpenFunc: func(ctx context.Context, env string) (*model.Vault, error) {
-			vault, _ := model.NewVault(env, "test-fingerprint", "salt")
-			vault.SetPassphrase("passphrase")
-			vault.SetEntry(key, value)
+			vault, _ := model.NewVault(envTest, fingerprintTest, saltTest)
+			vault.SetPassphrase(passphraseTest)
+			vault.SetEntry(keyTest, valueTest)
 			return vault, nil
 		},
 	}
 	loggerService := &test.MockLogger{}
 	encryptionService := &test.MockEncryptionService{
 		DecryptFunc: func(ciphertext, encodedSalt, passphrase string) ([]byte, error) {
-			return []byte(value), nil
+			return []byte(valueTest), nil
 		},
 	}
 
 	useCase := NewExportEnvUseCase(vaultService, encryptionService, loggerService)
 
-	useCase.Execute(context.Background(), env, "json")
+	useCase.Execute(context.Background(), envTest, "json")
 
 	var got map[string]string
 	json.Unmarshal([]byte(loggerService.OutputLogs[0]), &got)
-	assert.Equal(t, got[key], value, fmt.Sprintf("want: %q, got: %q", value, got[key]))
+	assert.Equal(t, got[keyTest], valueTest, fmt.Sprintf("want: %q, got: %q", valueTest, got[keyTest]))
 }
 
 func TestExportEnvUseCase_Execute_Dotenv(t *testing.T) {
-	env := "test"
-	key := "test-key"
-	value := "test-value"
 	vaultService := &test.MockVaultService{
 		OpenFunc: func(ctx context.Context, env string) (*model.Vault, error) {
-			vault, _ := model.NewVault(env, "test-fingerprint", "salt")
-			vault.SetPassphrase("passphrase")
-			vault.SetEntry(key, value)
+			vault, _ := model.NewVault(envTest, fingerprintTest, saltTest)
+			vault.SetPassphrase(passphraseTest)
+			vault.SetEntry(keyTest, valueTest)
 			return vault, nil
 		},
 	}
 	loggerService := &test.MockLogger{}
 	encryptionService := &test.MockEncryptionService{
 		DecryptFunc: func(ciphertext, encodedSalt, passphrase string) ([]byte, error) {
-			return []byte(value), nil
+			return []byte(valueTest), nil
 		},
 	}
 
 	useCase := NewExportEnvUseCase(vaultService, encryptionService, loggerService)
 
-	useCase.Execute(context.Background(), env, "dotenv")
+	useCase.Execute(context.Background(), envTest, "dotenv")
 
-	want := fmt.Sprintf("%s=%s\n", key, value)
+	want := fmt.Sprintf("%s=%s\n", keyTest, valueTest)
 	got := loggerService.OutputLogs[0]
 	assert.Equal(t, want, got)
 }

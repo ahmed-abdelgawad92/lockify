@@ -92,7 +92,8 @@ func (s *PassphraseService) getFromUser(ctx context.Context, env string) (string
 
 	// Cache passphrase in keyring (best effort, ignore errors)
 	key := s.getKeyringKey(env)
-	_ = s.cache.Set(key, passphrase)
+	//nolint:errcheck // We don't want to return an error here
+	s.cache.Set(key, passphrase)
 
 	return passphrase, nil
 }

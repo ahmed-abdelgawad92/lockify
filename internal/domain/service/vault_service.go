@@ -65,8 +65,8 @@ func (vs *VaultService) Create(ctx context.Context, env string) (*model.Vault, e
 }
 
 func (vs *VaultService) Open(ctx context.Context, env string) (*model.Vault, error) {
-	if exists, _ := vs.vaultRepo.Exists(ctx, env); !exists {
-		return nil, fmt.Errorf("vault for env %s does not exist", env)
+	if exists, err := vs.vaultRepo.Exists(ctx, env); !exists || err != nil {
+		return nil, fmt.Errorf("vault for env %s does not exist %w", env, err)
 	}
 
 	passphrase, err := vs.passphraseService.Get(ctx, env)
@@ -80,7 +80,9 @@ func (vs *VaultService) Open(ctx context.Context, env string) (*model.Vault, err
 	}
 
 	if err = vs.passphraseService.Validate(ctx, vault, passphrase); err != nil {
-		vs.passphraseService.Clear(ctx, env)
+		if err = vs.passphraseService.Clear(ctx, env); err != nil {
+			return nil, fmt.Errorf("failed to clear passphrase: %w", err)
+		}
 		return nil, fmt.Errorf("invalid credentials: %w", err)
 	}
 
